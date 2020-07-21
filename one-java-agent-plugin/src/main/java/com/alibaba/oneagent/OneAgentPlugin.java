@@ -21,7 +21,7 @@ import com.alibaba.oneagent.plugin.utils.IOUtils;
  * @author hengyunabc 2019-02-28
  *
  */
-public class ArthasPlugin implements Plugin {
+public class OneAgentPlugin implements Plugin {
     private static final Logger logger = LoggerFactory.getLogger(PluginManager.class);
 
     public static final int DEFAULT_ORDER = 1000;
@@ -39,12 +39,12 @@ public class ArthasPlugin implements Plugin {
 
     private PluginContext pluginContext;
 
-    public ArthasPlugin(URL location, Instrumentation instrumentation, ClassLoader parentClassLoader,
+    public OneAgentPlugin(URL location, Instrumentation instrumentation, ClassLoader parentClassLoader,
                     Properties gobalProperties) throws PluginException {
         this(location, Collections.<URL>emptySet(), instrumentation, parentClassLoader, gobalProperties);
     }
 
-    public ArthasPlugin(URL location, Set<URL> extraURLs, Instrumentation instrumentation,
+    public OneAgentPlugin(URL location, Set<URL> extraURLs, Instrumentation instrumentation,
                     ClassLoader parentClassLoader, Properties gobalProperties) throws PluginException {
 
         this.location = location;
@@ -57,7 +57,7 @@ public class ArthasPlugin implements Plugin {
 
         classLoader = new PlguinClassLoader(urls.toArray(new URL[0]), parentClassLoader);
 
-        URL pluginPropertiesURL = classLoader.getResource("arthas-plugin.properties");
+        URL pluginPropertiesURL = classLoader.getResource("plugin.properties");
 
         Properties properties = new Properties();
         properties.putAll(gobalProperties);

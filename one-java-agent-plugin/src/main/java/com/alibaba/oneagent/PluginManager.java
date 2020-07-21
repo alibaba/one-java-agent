@@ -44,7 +44,7 @@ public class PluginManager {
                 if (files != null) {
                     for (File file : files) {
                         if (!file.isHidden() && file.isDirectory()) {
-                            ArthasPlugin plugin = new ArthasPlugin(file.toURI().toURL(), instrumentation,
+                            OneAgentPlugin plugin = new OneAgentPlugin(file.toURI().toURL(), instrumentation,
                                             parentClassLoader, properties);
                             if (!containsPlugin(plugin.name())) {
                                 plugins.add(plugin);
@@ -105,8 +105,8 @@ public class PluginManager {
     public void uninstallPlugin(String name) {
         Plugin plugin = findPlugin(name);
         if (plugin != null && plugin.state() == PluginState.STOPED) {
-            if (plugin instanceof ArthasPlugin) {
-                ((ArthasPlugin) plugin).uninstall();
+            if (plugin instanceof OneAgentPlugin) {
+                ((OneAgentPlugin) plugin).uninstall();
                 this.plugins.remove(plugin);
             }
         }
@@ -132,8 +132,8 @@ public class PluginManager {
     }
 
     private void updateState(Plugin plugin, PluginState state) {
-        if (plugin instanceof ArthasPlugin) {
-            ((ArthasPlugin) plugin).setState(state);
+        if (plugin instanceof OneAgentPlugin) {
+            ((OneAgentPlugin) plugin).setState(state);
         }
     }
 
