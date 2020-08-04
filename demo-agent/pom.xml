@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.alibaba.oneagent</groupId>
+        <artifactId>one-java-agent-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <artifactId>demo-agent</artifactId>
+
+    <dependencies>
+    </dependencies>
+    <build>
+        <finalName>demo-agent</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <encoding>UTF-8</encoding>
+                    <showDeprecation>true</showDeprecation>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <manifestEntries>
+                                        <Premain-Class>com.test.DemoAgent</Premain-Class>
+                                        <Agent-Class>com.test.DemoAgent</Agent-Class>
+                                        <Can-Redefine-Classes>true</Can-Redefine-Classes>
+                                        <Can-Retransform-Classes>true</Can-Retransform-Classes>
+                                        <Specification-Title>${project.name}</Specification-Title>
+                                        <Specification-Version>${project.version}</Specification-Version>
+                                        <Implementation-Title>${project.name}</Implementation-Title>
+                                        <Implementation-Version>${project.version}</Implementation-Version>
+                                    </manifestEntries>
+                                </transformer>
+                            </transformers>
+                            <createSourcesJar>true</createSourcesJar>
+                            <shadeSourcesContent>true</shadeSourcesContent>
+                            <artifactSet>
+                            </artifactSet>
+                            
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

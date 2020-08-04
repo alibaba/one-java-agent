@@ -1,4 +1,4 @@
-package com.alibaba.oneagent.plugin.utils;
+package com.alibaba.oneagent.utils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

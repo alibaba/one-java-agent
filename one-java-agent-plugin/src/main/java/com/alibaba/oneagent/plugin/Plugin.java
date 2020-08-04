@@ -1,4 +1,4 @@
-package com.alibaba.oneagent;
+package com.alibaba.oneagent.plugin;
 
 import java.net.URL;
 
@@ -20,6 +20,8 @@ public interface Plugin {
     int order();
 
     PluginState state();
+    
+    void setState(PluginState state);
 
     String name();
 

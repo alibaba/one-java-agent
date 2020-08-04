@@ -1,4 +1,4 @@
-package com.alibaba.oneagent;
+package com.alibaba.oneagent.plugin;
 
 import java.lang.instrument.Instrumentation;
 import java.util.Properties;

@@ -1,4 +1,4 @@
-package com.alibaba.oneagent;
+package com.alibaba.oneagent.plugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,10 +11,11 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import com.alibaba.arthas.deps.org.slf4j.Logger;
-import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.alibaba.oneagent.plugin.properties.PropertiesInjectUtils;
-import com.alibaba.oneagent.plugin.utils.IOUtils;
+import com.alibaba.oneagent.utils.IOUtils;
 
 /**
  *
@@ -22,7 +23,7 @@ import com.alibaba.oneagent.plugin.utils.IOUtils;
  *
  */
 public class OneAgentPlugin implements Plugin {
-    private static final Logger logger = LoggerFactory.getLogger(PluginManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(PluginManagerImpl.class);
 
     public static final int DEFAULT_ORDER = 1000;
 

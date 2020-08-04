@@ -1,4 +1,4 @@
-package com.alibaba.oneagent;
+package com.alibaba.oneagent.plugin;
 
 /**
  *

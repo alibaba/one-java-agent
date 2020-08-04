@@ -40,13 +40,16 @@
     <url>https://github.com/alibaba/one-java-agent</url>
 
     <modules>
+        <module>demo-agent</module>
         <module>one-java-agent-plugin</module>
+        <module>one-java-agent</module>
     </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
+        <oneagent.deps.package>com.alibaba.oneagent.deps</oneagent.deps.package>
     </properties>
 
     <dependencyManagement>
