@@ -12,6 +12,7 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.oneagent.plugin.PluginException;
 import com.alibaba.oneagent.plugin.PluginManager;
 import com.alibaba.oneagent.plugin.PluginManagerImpl;
 import com.alibaba.oneagent.service.TransformerManager;
@@ -39,20 +40,31 @@ public class OneAgent {
 		main(false, args, inst);
 	}
 
+    public static void init(String args, Instrumentation inst) {
+        main(false, args, inst);
+    }
+
+    public static void destory() throws PluginException {
+        OneAgent oneAgent = getInstance();
+        if (oneAgent != null) {
+            oneAgent.pluginMaanger().stopPlugins();
+        }
+    }
+
 	private static synchronized void main(boolean premain, String args, Instrumentation inst) {
 		if (instance == null) {
 			synchronized (OneAgent.class) {
 				if (instance == null) {
 					OneAgent temp = new OneAgent();
 					args = decodeArg(args);
-					temp.init(premain, args, inst);
+					temp.init(args, inst, premain);
 					instance = temp;
 				}
 			}
 		}
 	}
 
-	private void init(boolean premain, final String args, final Instrumentation inst) {
+	private void init(final String args, final Instrumentation inst, boolean premain) {
 		initLogger();
 
 		Map<String, String> map = FeatureCodec.DEFAULT_COMMANDLINE_CODEC.toMap(args);
