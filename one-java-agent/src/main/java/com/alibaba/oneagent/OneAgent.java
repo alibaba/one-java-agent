@@ -33,15 +33,15 @@ public class OneAgent {
 	private static Logger logger;
 
 	public static void premain(String args, Instrumentation inst) {
-		main(true, args, inst);
+		main(args, inst, true);
 	}
 
 	public static void agentmain(String args, Instrumentation inst) {
-		main(false, args, inst);
+		main(args, inst, false);
 	}
 
     public static void init(String args, Instrumentation inst) {
-        main(false, args, inst);
+        main(args, inst, false);
     }
 
     public static void destory() throws PluginException {
@@ -51,7 +51,7 @@ public class OneAgent {
         }
     }
 
-	private static synchronized void main(boolean premain, String args, Instrumentation inst) {
+	private static synchronized void main(String args, Instrumentation inst, boolean premain) {
 		if (instance == null) {
 			synchronized (OneAgent.class) {
 				if (instance == null) {
