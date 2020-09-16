@@ -6,8 +6,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +41,20 @@ public class PluginManagerImpl implements PluginManager {
 
 	// 可能会执行多次
 	synchronized public void scanPlugins() throws PluginException {
+	    
+	    // 通过外部参数，可以只启动指定的插件
+	    Set<String> includePlugins = new HashSet<String>();
+	    String pluginsStr = properties.getProperty("oneagent.plugins");
+	    if(pluginsStr!=null) {
+	        String[] plugins = pluginsStr.split(",");
+	        for(String plugin : plugins) {
+	            plugin = plugin.trim();
+	            if(!plugin.isEmpty()) {
+	                includePlugins.add(plugin);
+	            }
+	        }
+	    }
+	    
 		for (URL scanLocation : scanPluginlLoacations) {
 			File dir = new File(scanLocation.getFile());
 			try {
@@ -46,6 +62,12 @@ public class PluginManagerImpl implements PluginManager {
 				if (files != null) {
 					for (File file : files) {
 						if (!file.isHidden() && file.isDirectory()) {
+						    //判断是否在指定的插件里
+						    if(!includePlugins.isEmpty() && !includePlugins.contains(file.getName())) {
+						        // skip
+						        continue;
+						    }
+
 							// 判断插件的类型
 							Plugin plugin = null;
 							Properties pluginProperties = PropertiesUtils
