@@ -42,6 +42,7 @@
     <modules>
         <module>demo-agent</module>
         <module>one-java-agent-plugin</module>
+        <module>demo-plugin</module>
         <module>one-java-agent</module>
     </modules>
 
@@ -50,6 +51,7 @@
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
         <oneagent.deps.package>com.alibaba.oneagent.deps</oneagent.deps.package>
+        <asm.version>8.0.1</asm.version>
     </properties>
 
     <dependencyManagement>
@@ -91,8 +93,34 @@
                 <version>1.2.3</version>
             </dependency>
 
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.11</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>2.9.1</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
 
     <build>
         <pluginManagement>

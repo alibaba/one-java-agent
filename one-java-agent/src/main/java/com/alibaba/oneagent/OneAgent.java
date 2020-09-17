@@ -6,6 +6,8 @@ import java.lang.instrument.Instrumentation;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.security.CodeSource;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -26,19 +28,19 @@ import com.alibaba.oneagent.utils.FeatureCodec;
  */
 public class OneAgent {
 
-	private static volatile OneAgent instance;
+    private static volatile OneAgent instance;
 
-	private PluginManager pluginManager;
-	private TransformerManager transformerManager;
-	private static Logger logger;
+    private PluginManager pluginManager;
+    private TransformerManager transformerManager;
+    private static Logger logger;
 
-	public static void premain(String args, Instrumentation inst) {
-		main(args, inst, true);
-	}
+    public static void premain(String args, Instrumentation inst) {
+        main(args, inst, true);
+    }
 
-	public static void agentmain(String args, Instrumentation inst) {
-		main(args, inst, false);
-	}
+    public static void agentmain(String args, Instrumentation inst) {
+        main(args, inst, false);
+    }
 
     public static void init(String args, Instrumentation inst) {
         main(args, inst, false);
@@ -51,81 +53,96 @@ public class OneAgent {
         }
     }
 
-	private static synchronized void main(String args, Instrumentation inst, boolean premain) {
-		if (instance == null) {
-			synchronized (OneAgent.class) {
-				if (instance == null) {
-					OneAgent temp = new OneAgent();
-					args = decodeArg(args);
-					temp.init(args, inst, premain);
-					instance = temp;
-				}
-			}
-		}
-	}
+    private static synchronized void main(String args, Instrumentation inst, boolean premain) {
+        if (instance == null) {
+            synchronized (OneAgent.class) {
+                if (instance == null) {
+                    OneAgent temp = new OneAgent();
+                    args = decodeArg(args);
+                    temp.init(args, inst, premain);
+                    instance = temp;
+                }
+            }
+        }
+    }
 
-	private void init(final String args, final Instrumentation inst, boolean premain) {
-		initLogger();
+    private void init(final String args, final Instrumentation inst, boolean premain) {
+        initLogger();
 
-		Map<String, String> map = FeatureCodec.DEFAULT_COMMANDLINE_CODEC.toMap(args);
+        Map<String, String> map = FeatureCodec.DEFAULT_COMMANDLINE_CODEC.toMap(args);
 
-		String oneagentHome = map.get("oneagent.home");
+        String oneagentHome = map.get("oneagent.home");
 
-		if (oneagentHome == null) {
-			CodeSource codeSource = OneAgent.class.getProtectionDomain().getCodeSource();
-			URL agentJarLocation = codeSource.getLocation();
-			oneagentHome = new File(agentJarLocation.getFile()).getParent();
-			map.put("oneagent.home", oneagentHome);
-		}
+        if (oneagentHome == null) {
+            CodeSource codeSource = OneAgent.class.getProtectionDomain().getCodeSource();
+            URL agentJarLocation = codeSource.getLocation();
+            oneagentHome = new File(agentJarLocation.getFile()).getParent();
+            map.put("oneagent.home", oneagentHome);
+        }
 
-		logger.info("oneagent home: " + map.get("oneagent.home"));
+        logger.info("oneagent home: " + map.get("oneagent.home"));
 
-		transformerManager = new TransformerManagerImpl(inst);
+        transformerManager = new TransformerManagerImpl(inst);
 
-		Properties properties = new Properties();
-		properties.putAll(map);
+        Properties properties = new Properties();
+        properties.putAll(map);
 
-		logger.debug("PluginManager properties: {}", properties);
-		try {
-			pluginManager = new PluginManagerImpl(inst, properties, new File(oneagentHome, "plugins").toURI().toURL());
+        logger.debug("PluginManager properties: {}", properties);
 
-			pluginManager.scanPlugins();
+        try {
 
-			pluginManager.enablePlugins();
+            // extPlugins
+            List<URL> extPluginlLoacations = new ArrayList<URL>();
+            String extStr = map.get("oneagent.extPlugins");
+            if (extStr != null) {
+                String[] strings = extStr.split(",");
+                for (String s : strings) {
+                    s = s.trim();
+                    if (!s.isEmpty()) {
+                        extPluginlLoacations.add(new File(s).toURI().toURL());
+                    }
+                }
+            }
 
-			pluginManager.initPlugins();
+            pluginManager = new PluginManagerImpl(inst, properties, new File(oneagentHome, "plugins").toURI().toURL(), extPluginlLoacations);
 
-			pluginManager.startPlugins();
+            pluginManager.scanPlugins();
 
-		} catch (Exception e) {
-			logger.error("PluginManager error", e);
-		}
-	}
+            pluginManager.enablePlugins();
 
-	private void initLogger() {
-		logger = LoggerFactory.getLogger(OneAgent.class);
-	}
+            pluginManager.initPlugins();
 
-	private static String decodeArg(String arg) {
-		if (arg == null) {
-			return arg;
-		}
-		try {
-			return URLDecoder.decode(arg, "utf-8");
-		} catch (UnsupportedEncodingException e) {
-			return arg;
-		}
-	}
+            pluginManager.startPlugins();
 
-	public static OneAgent getInstance() {
-		return instance;
-	}
+        } catch (Exception e) {
+            logger.error("PluginManager error", e);
+        }
+    }
 
-	public PluginManager pluginMaanger() {
-		return pluginManager;
-	}
+    private void initLogger() {
+        logger = LoggerFactory.getLogger(OneAgent.class);
+    }
 
-	public TransformerManager transformerManager() {
-		return transformerManager;
-	}
+    private static String decodeArg(String arg) {
+        if (arg == null) {
+            return arg;
+        }
+        try {
+            return URLDecoder.decode(arg, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            return arg;
+        }
+    }
+
+    public static OneAgent getInstance() {
+        return instance;
+    }
+
+    public PluginManager pluginMaanger() {
+        return pluginManager;
+    }
+
+    public TransformerManager transformerManager() {
+        return transformerManager;
+    }
 }

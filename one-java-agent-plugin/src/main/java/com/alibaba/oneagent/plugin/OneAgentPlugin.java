@@ -1,7 +1,6 @@
 package com.alibaba.oneagent.plugin;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -16,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.oneagent.plugin.properties.PropertiesInjectUtils;
 import com.alibaba.oneagent.utils.IOUtils;
+import com.alibaba.oneagent.utils.PropertiesUtils;
 
 /**
  *
@@ -41,37 +41,39 @@ public class OneAgentPlugin implements Plugin {
     private PluginContext pluginContext;
 
     public OneAgentPlugin(URL location, Instrumentation instrumentation, ClassLoader parentClassLoader,
-                    Properties gobalProperties) throws PluginException {
+            Properties gobalProperties) throws PluginException {
         this(location, Collections.<URL>emptySet(), instrumentation, parentClassLoader, gobalProperties);
     }
 
     public OneAgentPlugin(URL location, Set<URL> extraURLs, Instrumentation instrumentation,
-                    ClassLoader parentClassLoader, Properties gobalProperties) throws PluginException {
+            ClassLoader parentClassLoader, Properties gobalProperties) throws PluginException {
 
         this.location = location;
         this.parentClassLoader = parentClassLoader;
         this.state = PluginState.NONE;
 
-        List<URL> urls = new ArrayList<URL>();
-        urls.addAll(extraURLs);
-        urls.addAll(scanPluginUrls());
-
-        classLoader = new PlguinClassLoader(urls.toArray(new URL[0]), parentClassLoader);
-
-        URL pluginPropertiesURL = classLoader.getResource("plugin.properties");
-
-        Properties properties = new Properties();
-        properties.putAll(gobalProperties);
-        if (pluginPropertiesURL != null) {
-            try {
-                properties.load(pluginPropertiesURL.openStream());
-            } catch (IOException e) {
-                throw new PluginException("load plugin properties error, url: " + pluginPropertiesURL, e);
-            }
+        File pluginPropertiesFile = new File(location.getFile(), "plugin.properties");
+        Properties properties = PropertiesUtils.loadOrNull(pluginPropertiesFile);
+        if (properties == null) {
+            throw new PluginException("load plugin properties error, path: " + pluginPropertiesFile.getAbsolutePath());
         }
+
+        Properties tmp = new Properties();
+        tmp.putAll(gobalProperties);
+        tmp.putAll(properties);
+        properties = tmp;
 
         pluginConfig = new PluginConfig();
         PropertiesInjectUtils.inject(properties, pluginConfig);
+
+        String classpath = pluginConfig.getClasspath();
+
+        List<URL> urls = new ArrayList<URL>();
+        urls.addAll(extraURLs);
+
+        urls.addAll(scanPluginUrls(classpath));
+
+        classLoader = new PlguinClassLoader(urls.toArray(new URL[0]), parentClassLoader);
 
         this.pluginContext = new PluginContextImpl(this, instrumentation, properties);
     }
@@ -157,27 +159,40 @@ public class OneAgentPlugin implements Plugin {
         return pluginConfig.getOrder();
     }
 
-    private List<URL> scanPluginUrls() throws PluginException {
-        File libDir = new File(location.getFile(), "lib");
-        File[] listFiles = libDir.listFiles();
+    private List<URL> scanPluginUrls(String classpath) throws PluginException {
         List<URL> urls = new ArrayList<URL>();
+
         try {
-            if (listFiles != null) {
-                for (File file : listFiles) {
-                    if (file.getName().endsWith(".jar")) {
+            String pluginDir = location.getFile();
 
-                        urls.add(file.toURI().toURL());
-
-                    }
+            String[] strings = classpath.split(":");
+            for (String path : strings) {
+                if (path.endsWith(".jar")) {
+                    File file = new File(pluginDir, path);
+                    urls.add(file.toURI().toURL());
+                } else {
+                    urls.addAll(scanDir(path));
                 }
             }
-
-            File confDir = new File(location.getFile(), "conf");
-            if (confDir.isDirectory()) {
-                urls.add(confDir.toURI().toURL());
-            }
         } catch (MalformedURLException e) {
-            throw new PluginException("", e);
+            throw new PluginException("scan error, classpath: " + classpath, e);
+        }
+        return urls;
+    }
+
+    private List<URL> scanDir(String path) throws MalformedURLException {
+        List<URL> urls = new ArrayList<URL>();
+        File libDir = new File(location.getFile(), path);
+        if (!libDir.exists()) {
+            return urls;
+        }
+        File[] listFiles = libDir.listFiles();
+        if (listFiles != null) {
+            for (File file : listFiles) {
+                if (file.getName().endsWith(".jar")) {
+                    urls.add(file.toURI().toURL());
+                }
+            }
         }
 
         return urls;

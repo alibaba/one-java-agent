@@ -18,6 +18,11 @@ import com.alibaba.oneagent.plugin.properties.Config;
 
 @Config
 public class TraditionalPluginConfig {
+    /**
+     * 插件规范版本
+     */
+    private String specification;
+    
 	private String version;
 	private String name;
 	private int order = OneAgentPlugin.DEFAULT_ORDER;
@@ -83,4 +88,12 @@ public class TraditionalPluginConfig {
 	public void setAgentInitMethod(String agentInitMethod) {
 		this.agentInitMethod = agentInitMethod;
 	}
+
+    public String getSpecification() {
+        return specification;
+    }
+
+    public void setSpecification(String specification) {
+        this.specification = specification;
+    }
 }
