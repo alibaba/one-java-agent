@@ -48,9 +48,11 @@ public class OneAgentTest {
         System.err.println("args: " + args);
         OneAgent.agentmain(args, instrumentation);
 
+        OneAgent.destory();
+        
         assertThat(capture.toString()).contains("enabled TestActivator").contains("init TestActivator")
-                .contains("start TestActivator").contains("DemoAgent started.");
-
+        .contains("start TestActivator").contains("DemoAgent started.")
+        .contains("stop TestActivator");
     }
 
 }

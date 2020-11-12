@@ -52,7 +52,7 @@ public class PluginManagerImpl implements PluginManager {
 
         // 通过外部参数，可以只启动指定的插件
         Set<String> includePlugins = new HashSet<String>();
-        String pluginsStr = properties.getProperty("oneagent.plugins");
+        String pluginsStr = properties.getProperty(PluginConstants.ONEAGENT_PLUGINS);
         if (pluginsStr != null) {
             String[] plugins = pluginsStr.split(",");
             for (String plugin : plugins) {
@@ -95,7 +95,7 @@ public class PluginManagerImpl implements PluginManager {
     private void loadPlugin(File location) throws MalformedURLException, PluginException {
         // 判断插件的类型
         Plugin plugin = null;
-        Properties pluginProperties = PropertiesUtils.loadOrNull(new File(location, "plugin.properties"));
+        Properties pluginProperties = PropertiesUtils.loadOrNull(new File(location, PluginConstants.PLUGIN_PROPERTIES));
 
         if (pluginProperties == null) {
             return;
