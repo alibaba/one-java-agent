@@ -36,6 +36,8 @@ public class OneAgentTest {
         File demoPluginDir = new File(file, "../../../demo-plugin/target/demo-plugin@0.0.1-SNAPSHOT");
 
         File demoAgentDir = new File(file, "../../../demo-agent/target/demo-agent@0.0.1-SNAPSHOT");
+        
+        File dubboDemoPluginDir = new File(file, "../../../demo-agent/target/dubbo-test-plugin@0.0.1-SNAPSHOT");
 
         Instrumentation instrumentation = ByteBuddyAgent.install();
 

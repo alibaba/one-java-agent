@@ -72,7 +72,7 @@ public class AgentImpl implements Agent {
                 }
             }
 
-            pluginManager = new PluginManagerImpl(inst, properties, new File(oneagentHome, "plugins").toURI().toURL(),
+            pluginManager = new PluginManagerImpl(inst, transformerManager, properties, new File(oneagentHome, "plugins").toURI().toURL(),
                     extPluginlLoacations);
 
             pluginManager.scanPlugins();

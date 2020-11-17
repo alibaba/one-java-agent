@@ -15,6 +15,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.oneagent.service.TransformerManager;
 import com.alibaba.oneagent.utils.PropertiesUtils;
 
 /**
@@ -29,6 +30,8 @@ public class PluginManagerImpl implements PluginManager {
     private List<Plugin> plugins = new ArrayList<Plugin>();
 
     private Instrumentation instrumentation;
+    
+    private TransformerManager transformerManager;
 
     private Properties properties;
 
@@ -36,12 +39,13 @@ public class PluginManagerImpl implements PluginManager {
 
     private List<URL> extPluginlLoacations = new ArrayList<URL>();
 
-    public PluginManagerImpl(Instrumentation instrumentation, Properties properties, URL scanPluginLocation) {
-        this(instrumentation, properties, scanPluginLocation, Collections.<URL>emptyList());
+    public PluginManagerImpl(Instrumentation instrumentation, TransformerManager transformerManager,Properties properties, URL scanPluginLocation) {
+        this(instrumentation, transformerManager, properties, scanPluginLocation, Collections.<URL>emptyList());
     }
 
-    public PluginManagerImpl(Instrumentation instrumentation, Properties properties, URL scanPluginLocation, List<URL> extPluginlLoacations) {
+    public PluginManagerImpl(Instrumentation instrumentation, TransformerManager transformerManager, Properties properties, URL scanPluginLocation, List<URL> extPluginlLoacations) {
         this.instrumentation = instrumentation;
+        this.transformerManager = transformerManager;
         this.properties = properties;
         this.scanPluginlLoacations.add(scanPluginLocation);
         this.extPluginlLoacations = extPluginlLoacations;
@@ -104,7 +108,7 @@ public class PluginManagerImpl implements PluginManager {
             plugin = new TraditionalPlugin(location.toURI().toURL(), instrumentation, parentClassLoader, properties);
 
         } else {
-            plugin = new OneAgentPlugin(location.toURI().toURL(), instrumentation, parentClassLoader, properties);
+            plugin = new OneAgentPlugin(location.toURI().toURL(), instrumentation, transformerManager, parentClassLoader, properties);
         }
         if (!containsPlugin(plugin.name())) {
             plugins.add(plugin);

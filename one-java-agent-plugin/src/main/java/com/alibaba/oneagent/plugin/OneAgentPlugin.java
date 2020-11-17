@@ -13,7 +13,11 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.bytekit.asm.instrument.InstrumentParseResult;
+import com.alibaba.bytekit.asm.instrument.InstrumentTemplate;
+import com.alibaba.bytekit.asm.instrument.InstrumentTransformer;
 import com.alibaba.oneagent.plugin.properties.PropertiesInjectUtils;
+import com.alibaba.oneagent.service.TransformerManager;
 import com.alibaba.oneagent.utils.IOUtils;
 import com.alibaba.oneagent.utils.PropertiesUtils;
 
@@ -40,12 +44,12 @@ public class OneAgentPlugin implements Plugin {
 
     private PluginContext pluginContext;
 
-    public OneAgentPlugin(URL location, Instrumentation instrumentation, ClassLoader parentClassLoader,
+    public OneAgentPlugin(URL location, Instrumentation instrumentation, TransformerManager transformerManager, ClassLoader parentClassLoader,
             Properties gobalProperties) throws PluginException {
-        this(location, Collections.<URL>emptySet(), instrumentation, parentClassLoader, gobalProperties);
+        this(location, Collections.<URL>emptySet(), instrumentation, transformerManager, parentClassLoader, gobalProperties);
     }
 
-    public OneAgentPlugin(URL location, Set<URL> extraURLs, Instrumentation instrumentation,
+    public OneAgentPlugin(URL location, Set<URL> extraURLs, Instrumentation instrumentation, TransformerManager transformerManager,
             ClassLoader parentClassLoader, Properties gobalProperties) throws PluginException {
 
         this.location = location;
@@ -75,7 +79,7 @@ public class OneAgentPlugin implements Plugin {
 
         classLoader = new PlguinClassLoader(urls.toArray(new URL[0]), parentClassLoader);
 
-        this.pluginContext = new PluginContextImpl(this, instrumentation, properties);
+        this.pluginContext = new PluginContextImpl(this, instrumentation, transformerManager,  properties);
     }
 
     @Override
@@ -103,10 +107,23 @@ public class OneAgentPlugin implements Plugin {
     public void init() throws PluginException {
         try {
             pluginActivator.init(pluginContext);
+            
+            processInstrument();
         } catch (Throwable e) {
             this.state = PluginState.ERROR;
             throw new PluginException("init plugin error, plugin name: " + pluginConfig.getName(), e);
         }
+    }
+    
+    private void processInstrument() {
+        InstrumentTemplate instrumentTemplate = new InstrumentTemplate();
+        instrumentTemplate.setTargetClassLoader(this.getClass().getClassLoader());
+        InstrumentParseResult instrumentParseResult = instrumentTemplate.build();
+
+        InstrumentTransformer instrumentTransformer = new InstrumentTransformer(instrumentParseResult);
+        int order = pluginContext.getPlugin().order();
+        
+        pluginContext.getTransformerManager().addTransformer(instrumentTransformer, true, order);
     }
 
     @Override
