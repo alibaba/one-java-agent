@@ -102,6 +102,7 @@ public class PluginManagerImpl implements PluginManager {
         Properties pluginProperties = PropertiesUtils.loadOrNull(new File(location, PluginConstants.PLUGIN_PROPERTIES));
 
         if (pluginProperties == null) {
+            logger.error("can not find {} in location: {}", PluginConstants.PLUGIN_PROPERTIES, location.getAbsolutePath());
             return;
         }
         if (PluginConstants.TRADITIONAL_PLUGIN_TYPE.equalsIgnoreCase(pluginProperties.getProperty("type"))) {

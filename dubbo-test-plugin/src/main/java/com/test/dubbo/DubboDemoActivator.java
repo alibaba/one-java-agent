@@ -23,20 +23,20 @@ public class DubboDemoActivator implements PluginActivator {
     @Override
     public void init(PluginContext context) throws Exception {
         System.out.println("init DubboDemoActivator");
-        int order = context.getPlugin().order();
-        processInstrument(order);
+//        int order = context.getPlugin().order();
+//        processInstrument(order);
     }
 
-    private void processInstrument(int order) {
-        InstrumentTemplate instrumentTemplate = new InstrumentTemplate();
-        instrumentTemplate.setTargetClassLoader(this.getClass().getClassLoader());
-        InstrumentParseResult instrumentParseResult = instrumentTemplate.build();
-
-        InstrumentTransformer instrumentTransformer = new InstrumentTransformer(instrumentParseResult);
-
-        OneAgent.getAgent().transformerManager().addTransformer(instrumentTransformer, true, order);
-
-    }
+//    private void processInstrument(int order) {
+//        InstrumentTemplate instrumentTemplate = new InstrumentTemplate();
+//        instrumentTemplate.setTargetClassLoader(this.getClass().getClassLoader());
+//        InstrumentParseResult instrumentParseResult = instrumentTemplate.build();
+//
+//        InstrumentTransformer instrumentTransformer = new InstrumentTransformer(instrumentParseResult);
+//
+//        OneAgent.getAgent().transformerManager().addTransformer(instrumentTransformer, true, order);
+//
+//    }
 
     @Override
     public void start(PluginContext context) throws Exception {

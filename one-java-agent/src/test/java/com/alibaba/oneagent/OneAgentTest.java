@@ -36,14 +36,15 @@ public class OneAgentTest {
         File demoPluginDir = new File(file, "../../../demo-plugin/target/demo-plugin@0.0.1-SNAPSHOT");
 
         File demoAgentDir = new File(file, "../../../demo-agent/target/demo-agent@0.0.1-SNAPSHOT");
-        
-        File dubboDemoPluginDir = new File(file, "../../../demo-agent/target/dubbo-test-plugin@0.0.1-SNAPSHOT");
+
+        File dubboDemoPluginDir = new File(file, "../../../dubbo-test-plugin/target/dubbo-test-plugin@0.0.1-SNAPSHOT");
 
         Instrumentation instrumentation = ByteBuddyAgent.install();
 
         Map<String, String> map = new HashMap<String, String>();
 
-        map.put("oneagent.extPlugins", demoPluginDir.getAbsolutePath() + "," + demoAgentDir.getAbsolutePath());
+        map.put("oneagent.extPlugins", demoPluginDir.getAbsolutePath() + "," + demoAgentDir.getAbsolutePath() + ","
+                + dubboDemoPluginDir.getAbsolutePath());
 
         String args = FeatureCodec.DEFAULT_COMMANDLINE_CODEC.toString(map);
 
@@ -51,10 +52,10 @@ public class OneAgentTest {
         OneAgent.agentmain(args, instrumentation);
 
         OneAgent.destory();
-        
+
         assertThat(capture.toString()).contains("enabled TestActivator").contains("init TestActivator")
-        .contains("start TestActivator").contains("DemoAgent started.")
-        .contains("stop TestActivator");
+                .contains("start TestActivator").contains("start DubboDemoActivator").contains("DemoAgent started.")
+                .contains("stop TestActivator");
     }
 
 }

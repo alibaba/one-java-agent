@@ -30,14 +30,12 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>bytekit-instrument-api</artifactId>
-            <version>0.0.2</version>
             <optional>true</optional>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>bytekit-core</artifactId>
-            <version>0.0.2</version>
             <optional>true</optional>
             <scope>provided</scope>
         </dependency>
