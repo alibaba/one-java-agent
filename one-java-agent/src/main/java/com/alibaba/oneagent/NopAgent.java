@@ -17,7 +17,7 @@ import com.alibaba.oneagent.service.TransformerManager;
  */
 public class NopAgent implements Agent {
 
-    static NopAgent INSTANCE;
+    static final NopAgent INSTANCE = new NopAgent();
 
     static final TransformerManager TRANSFOR_MERMANAGER = new TransformerManager() {
 

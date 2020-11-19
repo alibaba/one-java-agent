@@ -43,8 +43,10 @@ public class AgentImpl implements Agent {
 
         if (oneagentHome == null) {
             CodeSource codeSource = this.getClass().getProtectionDomain().getCodeSource();
+            // ~/oneagent/core/oneagent@0.0.1-SNAPSHOT/one-java-agent.jar
             URL agentJarLocation = codeSource.getLocation();
-            oneagentHome = new File(agentJarLocation.getFile()).getParent();
+            // ~/oneagent/core
+            oneagentHome = new File(agentJarLocation.getFile()).getParentFile().getParentFile().getParent();
             map.put("oneagent.home", oneagentHome);
         }
 
