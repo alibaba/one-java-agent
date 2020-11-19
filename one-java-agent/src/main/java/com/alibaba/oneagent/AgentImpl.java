@@ -94,6 +94,12 @@ public class AgentImpl implements Agent {
             pluginMaanger().stopPlugins();
         } catch (PluginException e) {
             throw new RuntimeException(e);
+        } finally {
+            try {
+                transformerManager.destory();
+            } catch (Exception e) {
+                logger.error("TransformerManager destory error", e);
+            }
         }
     }
 

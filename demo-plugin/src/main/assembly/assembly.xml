@@ -12,7 +12,7 @@
         <dependencySet>
             <outputDirectory>/</outputDirectory>
             <unpack>false</unpack>
-            <outputFileNameMapping>${artifactId}.jar </outputFileNameMapping>
+            <outputFileNameMapping>${artifactId}.jar</outputFileNameMapping>
             <includes>
                 <include>${artifact}</include>
             </includes>

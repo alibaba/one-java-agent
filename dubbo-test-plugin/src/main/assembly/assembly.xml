@@ -12,7 +12,7 @@
         <dependencySet>
             <outputDirectory>/</outputDirectory>
             <unpack>false</unpack>
-            <outputFileNameMapping>${artifactId}.jar </outputFileNameMapping>
+            <outputFileNameMapping>${artifactId}.jar</outputFileNameMapping>
             <includes>
                 <include>${artifact}</include>
             </includes>
@@ -29,6 +29,10 @@
         <file>
            	<source>src/main/plugin.properties</source>
             <destName>plugin.properties</destName>
+        </file>
+        <file>
+           	<source>../dubbo-test-instrument/target/dubbo-test-instrument.jar</source>
+            <destName>/instrument-lib/dubbo-test-instrument.jar</destName>
         </file>
     </files>
 </assembly>

@@ -13,4 +13,5 @@ public class PluginConstants {
 
     public static String PLUGIN_PROPERTIES = "plugin.properties";
 
+    public static String INSTRUMENT_LIB = "instrument-lib";
 }

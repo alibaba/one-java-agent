@@ -1,6 +1,7 @@
 package com.alibaba.oneagent.plugin;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -13,6 +14,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.bytekit.asm.instrument.InstrumentConfig;
 import com.alibaba.bytekit.asm.instrument.InstrumentParseResult;
 import com.alibaba.bytekit.asm.instrument.InstrumentTemplate;
 import com.alibaba.bytekit.asm.instrument.InstrumentTransformer;
@@ -44,13 +46,15 @@ public class OneAgentPlugin implements Plugin {
 
     private PluginContext pluginContext;
 
-    public OneAgentPlugin(URL location, Instrumentation instrumentation, TransformerManager transformerManager, ClassLoader parentClassLoader,
-            Properties gobalProperties) throws PluginException {
-        this(location, Collections.<URL>emptySet(), instrumentation, transformerManager, parentClassLoader, gobalProperties);
+    public OneAgentPlugin(URL location, Instrumentation instrumentation, TransformerManager transformerManager,
+            ClassLoader parentClassLoader, Properties gobalProperties) throws PluginException {
+        this(location, Collections.<URL>emptySet(), instrumentation, transformerManager, parentClassLoader,
+                gobalProperties);
     }
 
-    public OneAgentPlugin(URL location, Set<URL> extraURLs, Instrumentation instrumentation, TransformerManager transformerManager,
-            ClassLoader parentClassLoader, Properties gobalProperties) throws PluginException {
+    public OneAgentPlugin(URL location, Set<URL> extraURLs, Instrumentation instrumentation,
+            TransformerManager transformerManager, ClassLoader parentClassLoader, Properties gobalProperties)
+            throws PluginException {
 
         this.location = location;
         this.parentClassLoader = parentClassLoader;
@@ -79,7 +83,7 @@ public class OneAgentPlugin implements Plugin {
 
         classLoader = new PlguinClassLoader(urls.toArray(new URL[0]), parentClassLoader);
 
-        this.pluginContext = new PluginContextImpl(this, instrumentation, transformerManager,  properties);
+        this.pluginContext = new PluginContextImpl(this, instrumentation, transformerManager, properties);
     }
 
     @Override
@@ -107,22 +111,36 @@ public class OneAgentPlugin implements Plugin {
     public void init() throws PluginException {
         try {
             pluginActivator.init(pluginContext);
-            
+
             processInstrument();
         } catch (Throwable e) {
             this.state = PluginState.ERROR;
             throw new PluginException("init plugin error, plugin name: " + pluginConfig.getName(), e);
         }
     }
-    
-    private void processInstrument() {
+
+    private void processInstrument() throws IOException {
         InstrumentTemplate instrumentTemplate = new InstrumentTemplate();
-        instrumentTemplate.setTargetClassLoader(this.getClass().getClassLoader());
+
+        File instrumentLibDir = new File(this.location.getFile(), PluginConstants.INSTRUMENT_LIB);
+        if (instrumentLibDir.exists() && instrumentLibDir.isDirectory()) {
+            for (File file : instrumentLibDir.listFiles()) {
+                if (file.isFile() && file.getName().endsWith(".jar")) {
+                    instrumentTemplate.addJarFile(file);
+                }
+            }
+        }
+
         InstrumentParseResult instrumentParseResult = instrumentTemplate.build();
+
+        List<InstrumentConfig> instrumentConfigs = instrumentParseResult.getInstrumentConfigs();
+        if (instrumentConfigs == null || instrumentConfigs.isEmpty()) {
+            return;
+        }
 
         InstrumentTransformer instrumentTransformer = new InstrumentTransformer(instrumentParseResult);
         int order = pluginContext.getPlugin().order();
-        
+
         pluginContext.getTransformerManager().addTransformer(instrumentTransformer, true, order);
     }
 

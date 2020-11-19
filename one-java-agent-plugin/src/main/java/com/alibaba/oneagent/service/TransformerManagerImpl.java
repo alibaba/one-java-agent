@@ -13,7 +13,6 @@ import java.util.List;
  *
  */
 public class TransformerManagerImpl implements TransformerManager {
-
 	private Instrumentation instrumentation;
 	private ClassFileTransformer classFileTransformer;
 	private ClassFileTransformer reClassFileTransformer;

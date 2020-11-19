@@ -26,24 +26,11 @@
             <optional>true</optional>
             <scope>provided</scope>
         </dependency>
-        
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>bytekit-instrument-api</artifactId>
-            <optional>true</optional>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>bytekit-core</artifactId>
-            <optional>true</optional>
-            <scope>provided</scope>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.apache.dubbo</groupId>
-            <artifactId>dubbo</artifactId>
-            <version>2.7.8</version>
+
+         <dependency>
+            <groupId>com.alibaba.oneagent</groupId>
+            <artifactId>dubbo-test-instrument</artifactId>
+            <version>${project.version}</version>
             <optional>true</optional>
             <scope>provided</scope>
         </dependency>
