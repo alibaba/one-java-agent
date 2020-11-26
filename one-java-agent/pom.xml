@@ -163,4 +163,42 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>local</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <zip
+                                            destfile="${project.build.directory}/oneagent@${project.version}.zip">
+                                            <fileset
+                                                dir="${project.build.directory}"
+                                                includes="one-java-agent.jar" />
+                                        </zip>
+                                        <delete
+                                            dir="${user.home}/oneagent/core/oneagent@${pom.version}">
+                                        </delete>
+                                        <unzip
+                                            src="${project.build.directory}/oneagent@${project.version}.zip"
+                                            dest="${user.home}/oneagent/core/oneagent@${pom.version}">
+                                        </unzip>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

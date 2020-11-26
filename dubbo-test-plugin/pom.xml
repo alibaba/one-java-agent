@@ -73,4 +73,36 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>local</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <delete
+                                            dir="${user.home}/oneagent/plugins/${pom.artifactId}@${pom.version}">
+                                        </delete>
+                                        <copy todir="${user.home}/oneagent/plugins/${pom.artifactId}@${pom.version}">
+                                            <fileset
+                                                dir="${project.build.directory}/${pom.artifactId}@${pom.version}" />
+                                        </copy>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

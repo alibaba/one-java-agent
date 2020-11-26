@@ -56,3 +56,8 @@ agentJarPath=demo-agent.jar
 
 则 one java agent会启动这个`demo-agent`。
 
+
+## 编译开发
+
+* 本项目依赖 bytekit: https://github.com/alibaba/bytekit ，可能需要先`mvn clean install` bytekit
+* `mvn clean package -P local`会打包后安装最新到本地 `~/oneoneagent` 目录下
