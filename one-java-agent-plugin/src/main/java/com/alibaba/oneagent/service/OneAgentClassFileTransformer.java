@@ -38,7 +38,7 @@ public class OneAgentClassFileTransformer implements ClassFileTransformer {
 
             } catch (Throwable e) {
                 logger.error("transform error, loader: {}, className: {}, transformer: {}", loader, className,
-                        transformer);
+                        transformer, e);
             }
             if (transformResult != null) {
                 classfileBuffer = transformResult;
