@@ -41,6 +41,7 @@
 
     <modules>
         <module>demo-agent</module>
+        <module>one-java-agent-spy</module>
         <module>one-java-agent-plugin</module>
         <module>demo-plugin</module>
         <module>dubbo-test-instrument</module>
