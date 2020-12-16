@@ -15,7 +15,9 @@ jobs:
         with:
           java-version: ${{ matrix.java }} 
       - name: Build with Maven
-        run: mvn clean package
+        run: |
+          mvn clean package -DskipTests
+          mvn test
 
   build_jdk_ge_12:
     runs-on: ubuntu-latest
@@ -39,5 +41,6 @@ jobs:
           java-version: ${{ matrix.java }}
       - name: Build with Maven
         run: |
-          source ~/.testenv
-          mvn -Dmaven.compiler.fork=true -Dmaven.compiler.executable=$JAVA8_HOME/bin/javac clean package
+          source ~/.testenv 
+          mvn -Dmaven.compiler.fork=true -Dmaven.compiler.executable=$JAVA8_HOME/bin/javac clean package -DskipTests
+          mvn -Dmaven.compiler.fork=true -Dmaven.compiler.executable=$JAVA8_HOME/bin/javac test
