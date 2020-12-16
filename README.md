@@ -1,5 +1,9 @@
 # one-java-agent
-
+![JavaCI](https://github.com/alibaba/one-java-agent/workflows/JavaCI/badge.svg)
+[![maven](https://img.shields.io/maven-central/v/com.alibaba/one-java-agent.svg)](https://search.maven.org/search?q=g:com.alibaba%20AND%20a:one-java-agent*)
+![license](https://img.shields.io/github/license/alibaba/one-java-agent.svg)
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/alibaba/one-java-agent.svg)](http://isitmaintained.com/project/alibaba/one-java-agent "Average time to resolve an issue")
+[![Percentage of issues still open](http://isitmaintained.com/badge/open/alibaba/one-java-agent.svg)](http://isitmaintained.com/project/alibaba/one-java-agent "Percentage of issues still open")
 
 ## 目标
 
