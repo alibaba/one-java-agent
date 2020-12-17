@@ -21,7 +21,7 @@ import net.bytebuddy.agent.ByteBuddyAgent;
  * @author hengyunabc 2020-09-17
  *
  */
-public class OneAgentTest {
+public class BootstrapAgentTest {
     @Rule
     public OutputCapture capture = new OutputCapture();
 
@@ -49,9 +49,9 @@ public class OneAgentTest {
         String args = FeatureCodec.DEFAULT_COMMANDLINE_CODEC.toString(map);
 
         System.err.println("args: " + args);
-        OneAgent.agentmain(args, instrumentation);
+        BootstrapAgent.agentmain(args, instrumentation);
 
-        OneAgent.destory();
+        BootstrapAgent.destory();
 
         assertThat(capture.toString()).contains("enabled TestActivator").contains("init TestActivator")
                 .contains("start TestActivator").contains("start DubboDemoActivator").contains("DemoAgent started.")

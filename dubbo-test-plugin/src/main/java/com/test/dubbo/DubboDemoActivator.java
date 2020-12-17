@@ -3,7 +3,7 @@ package com.test.dubbo;
 import com.alibaba.bytekit.asm.instrument.InstrumentParseResult;
 import com.alibaba.bytekit.asm.instrument.InstrumentTemplate;
 import com.alibaba.bytekit.asm.instrument.InstrumentTransformer;
-import com.alibaba.oneagent.OneAgent;
+import com.alibaba.oneagent.BootstrapAgent;
 import com.alibaba.oneagent.plugin.PluginActivator;
 import com.alibaba.oneagent.plugin.PluginContext;
 

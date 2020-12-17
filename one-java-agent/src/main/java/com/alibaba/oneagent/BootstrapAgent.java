@@ -7,7 +7,7 @@ import java.lang.instrument.Instrumentation;
  * @author hengyunabc 2020-07-28
  *
  */
-public class OneAgent {
+public class BootstrapAgent {
 
     private static volatile Agent AGENT = NopAgent.INSTANCE;
 
