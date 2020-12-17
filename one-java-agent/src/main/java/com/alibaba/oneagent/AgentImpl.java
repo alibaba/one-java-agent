@@ -17,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.oneagent.plugin.PluginException;
 import com.alibaba.oneagent.plugin.PluginManager;
 import com.alibaba.oneagent.plugin.PluginManagerImpl;
+import com.alibaba.oneagent.service.ComponentManager;
+import com.alibaba.oneagent.service.ComponentManagerImpl;
 import com.alibaba.oneagent.service.TransformerManager;
 import com.alibaba.oneagent.service.TransformerManagerImpl;
 import com.alibaba.oneagent.utils.FeatureCodec;
@@ -29,7 +31,7 @@ import com.alibaba.oneagent.utils.FeatureCodec;
 public class AgentImpl implements Agent {
 
     private PluginManager pluginManager;
-    private TransformerManager transformerManager;
+    private ComponentManager componentManager;
     private static Logger logger;
 
     @Override
@@ -51,8 +53,9 @@ public class AgentImpl implements Agent {
         }
 
         logger.info("oneagent home: " + map.get("oneagent.home"));
-
-        transformerManager = new TransformerManagerImpl(inst);
+        
+        componentManager = new ComponentManagerImpl(inst);
+        componentManager.initComponents();
 
         Properties properties = new Properties();
         properties.putAll(map);
@@ -74,7 +77,7 @@ public class AgentImpl implements Agent {
                 }
             }
 
-            pluginManager = new PluginManagerImpl(inst, transformerManager, properties, new File(oneagentHome, "plugins").toURI().toURL(),
+            pluginManager = new PluginManagerImpl(inst, componentManager, properties, new File(oneagentHome, "plugins").toURI().toURL(),
                     extPluginlLoacations);
 
             pluginManager.scanPlugins();
@@ -98,7 +101,7 @@ public class AgentImpl implements Agent {
             throw new RuntimeException(e);
         } finally {
             try {
-                transformerManager.destory();
+                componentManager.stopComponents();
             } catch (Exception e) {
                 logger.error("TransformerManager destory error", e);
             }
@@ -126,8 +129,8 @@ public class AgentImpl implements Agent {
     }
 
     @Override
-    public TransformerManager transformerManager() {
-        return transformerManager;
+    public ComponentManager componentManager() {
+        return componentManager;
     }
 
 }

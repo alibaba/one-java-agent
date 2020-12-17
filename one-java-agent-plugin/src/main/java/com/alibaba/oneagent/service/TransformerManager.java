@@ -23,6 +23,4 @@ public interface TransformerManager {
 	public void removeTransformer(ClassFileTransformer transformer);
 
 	public List<ClassFileTransformer> classFileTransformer(boolean canRetransform);
-	
-	public void destory();
 }

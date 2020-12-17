@@ -12,7 +12,7 @@ import java.util.List;
  * @author hengyunabc 2020-07-30
  *
  */
-public class TransformerManagerImpl implements TransformerManager {
+public class TransformerManagerImpl implements TransformerManager, Component {
 	private Instrumentation instrumentation;
 	private ClassFileTransformer classFileTransformer;
 	private ClassFileTransformer reClassFileTransformer;
@@ -28,14 +28,6 @@ public class TransformerManagerImpl implements TransformerManager {
 		}
 
 	};
-
-	public TransformerManagerImpl(Instrumentation instrumentation) {
-		this.instrumentation = instrumentation;
-		classFileTransformer = new OneAgentClassFileTransformer(this, false);
-		reClassFileTransformer = new OneAgentClassFileTransformer(this, true);
-		instrumentation.addTransformer(classFileTransformer);
-		instrumentation.addTransformer(reClassFileTransformer);
-	}
 
 	@Override
 	synchronized public void addTransformer(ClassFileTransformer transformer) {
@@ -98,11 +90,6 @@ public class TransformerManagerImpl implements TransformerManager {
 		return result;
 	}
 
-	public void destory() {
-		instrumentation.removeTransformer(classFileTransformer);
-		instrumentation.removeTransformer(reClassFileTransformer);
-	}
-
 	static class ClassFileTransformerWraper {
 		ClassFileTransformer classFileTransformer;
 		int order = TransformerManager.DEFAULT_ORDER;
@@ -116,5 +103,34 @@ public class TransformerManagerImpl implements TransformerManager {
 			this.order = order;
 		}
 	}
+
+    @Override
+    public int order() {
+        return 0;
+    }
+
+    @Override
+    public void init() {
+        classFileTransformer = new OneAgentClassFileTransformer(this, false);
+        reClassFileTransformer = new OneAgentClassFileTransformer(this, true);
+        instrumentation.addTransformer(classFileTransformer);
+        instrumentation.addTransformer(reClassFileTransformer);
+    }
+
+    @Override
+    public void start() {
+        
+    }
+
+    @Override
+    public void stop() {
+        instrumentation.removeTransformer(classFileTransformer);
+        instrumentation.removeTransformer(reClassFileTransformer);
+    }
+
+    @Override
+    public String getName() {
+        return this.getClass().getName();
+    }
 
 }

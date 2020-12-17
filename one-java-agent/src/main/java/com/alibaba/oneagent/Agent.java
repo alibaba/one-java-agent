@@ -3,7 +3,7 @@ package com.alibaba.oneagent;
 import java.lang.instrument.Instrumentation;
 
 import com.alibaba.oneagent.plugin.PluginManager;
-import com.alibaba.oneagent.service.TransformerManager;
+import com.alibaba.oneagent.service.ComponentManager;
 
 /**
  * 
@@ -18,6 +18,6 @@ public interface Agent {
 
     public PluginManager pluginMaanger();
 
-    public TransformerManager transformerManager();
+    public ComponentManager componentManager();
 
 }

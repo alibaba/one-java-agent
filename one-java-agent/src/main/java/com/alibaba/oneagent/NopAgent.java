@@ -1,6 +1,5 @@
 package com.alibaba.oneagent;
 
-import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.util.List;
 import java.util.Properties;
@@ -8,7 +7,7 @@ import java.util.Properties;
 import com.alibaba.oneagent.plugin.Plugin;
 import com.alibaba.oneagent.plugin.PluginException;
 import com.alibaba.oneagent.plugin.PluginManager;
-import com.alibaba.oneagent.service.TransformerManager;
+import com.alibaba.oneagent.service.ComponentManager;
 
 /**
  * 
@@ -19,40 +18,25 @@ public class NopAgent implements Agent {
 
     static final NopAgent INSTANCE = new NopAgent();
 
-    static final TransformerManager TRANSFOR_MERMANAGER = new TransformerManager() {
+    static final ComponentManager COMPONENT_MANAGER = new ComponentManager() {
 
         @Override
-        public void addTransformer(ClassFileTransformer transformer) {
-
-        }
-
-        @Override
-        public void addTransformer(ClassFileTransformer transformer, boolean canRetransform) {
-
-        }
-
-        @Override
-        public void addTransformer(ClassFileTransformer transformer, int order) {
-
-        }
-
-        @Override
-        public void addTransformer(ClassFileTransformer transformer, boolean canRetransform, int order) {
-
-        }
-
-        @Override
-        public void removeTransformer(ClassFileTransformer transformer) {
-
-        }
-
-        @Override
-        public List<ClassFileTransformer> classFileTransformer(boolean canRetransform) {
+        public <T> T getComponent(Class<T> clazz) {
             return null;
         }
 
         @Override
-        public void destory() {
+        public void initComponents() {
+
+        }
+
+        @Override
+        public void startComponents() {
+
+        }
+
+        @Override
+        public void stopComponents() {
 
         }
 
@@ -133,11 +117,6 @@ public class NopAgent implements Agent {
     }
 
     @Override
-    public TransformerManager transformerManager() {
-        return TRANSFOR_MERMANAGER;
-    }
-
-    @Override
     public void init(String args, Instrumentation inst, boolean premain) {
 
     }
@@ -145,6 +124,11 @@ public class NopAgent implements Agent {
     @Override
     public void destory() {
 
+    }
+
+    @Override
+    public ComponentManager componentManager() {
+        return COMPONENT_MANAGER;
     }
 
 }

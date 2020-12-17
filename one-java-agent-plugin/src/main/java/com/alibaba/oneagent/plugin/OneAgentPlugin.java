@@ -19,6 +19,7 @@ import com.alibaba.bytekit.asm.instrument.InstrumentParseResult;
 import com.alibaba.bytekit.asm.instrument.InstrumentTemplate;
 import com.alibaba.bytekit.asm.instrument.InstrumentTransformer;
 import com.alibaba.oneagent.plugin.properties.PropertiesInjectUtils;
+import com.alibaba.oneagent.service.ComponentManager;
 import com.alibaba.oneagent.service.TransformerManager;
 import com.alibaba.oneagent.utils.IOUtils;
 import com.alibaba.oneagent.utils.PropertiesUtils;
@@ -46,19 +47,22 @@ public class OneAgentPlugin implements Plugin {
 
     private PluginContext pluginContext;
 
-    public OneAgentPlugin(URL location, Instrumentation instrumentation, TransformerManager transformerManager,
+    private ComponentManager componentManager;
+
+    public OneAgentPlugin(URL location, Instrumentation instrumentation, ComponentManager componentManager,
             ClassLoader parentClassLoader, Properties gobalProperties) throws PluginException {
-        this(location, Collections.<URL>emptySet(), instrumentation, transformerManager, parentClassLoader,
+        this(location, Collections.<URL>emptySet(), instrumentation, componentManager, parentClassLoader,
                 gobalProperties);
     }
 
     public OneAgentPlugin(URL location, Set<URL> extraURLs, Instrumentation instrumentation,
-            TransformerManager transformerManager, ClassLoader parentClassLoader, Properties gobalProperties)
+            ComponentManager componentManager, ClassLoader parentClassLoader, Properties gobalProperties)
             throws PluginException {
 
         this.location = location;
         this.parentClassLoader = parentClassLoader;
         this.state = PluginState.NONE;
+        this.componentManager = componentManager;
 
         File pluginPropertiesFile = new File(location.getFile(), "plugin.properties");
         Properties properties = PropertiesUtils.loadOrNull(pluginPropertiesFile);
@@ -83,7 +87,7 @@ public class OneAgentPlugin implements Plugin {
 
         classLoader = new PlguinClassLoader(urls.toArray(new URL[0]), parentClassLoader);
 
-        this.pluginContext = new PluginContextImpl(this, instrumentation, transformerManager, properties);
+        this.pluginContext = new PluginContextImpl(this, instrumentation, componentManager, properties);
     }
 
     @Override
@@ -141,7 +145,8 @@ public class OneAgentPlugin implements Plugin {
         InstrumentTransformer instrumentTransformer = new InstrumentTransformer(instrumentParseResult);
         int order = pluginContext.getPlugin().order();
 
-        pluginContext.getTransformerManager().addTransformer(instrumentTransformer, true, order);
+        this.componentManager.getComponent(TransformerManager.class).addTransformer(instrumentTransformer, true,
+                order);
     }
 
     @Override
