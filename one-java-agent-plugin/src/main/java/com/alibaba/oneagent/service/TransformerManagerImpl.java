@@ -130,7 +130,7 @@ public class TransformerManagerImpl implements TransformerManager, Component {
 
     @Override
     public String getName() {
-        return this.getClass().getName();
+        return this.getClass().getSimpleName();
     }
 
 }
