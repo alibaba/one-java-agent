@@ -2,17 +2,11 @@ package com.alibaba.oneagent;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.File;
 import java.lang.instrument.Instrumentation;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.boot.test.rule.OutputCapture;
-
-import com.alibaba.oneagent.utils.FeatureCodec;
 
 import net.bytebuddy.agent.ByteBuddyAgent;
 
@@ -27,26 +21,8 @@ public class BootstrapAgentTest {
 
     @Test
     public void test() {
-
-        URL location = this.getClass().getProtectionDomain().getCodeSource().getLocation();
-        System.err.println(location);
-
-        String file = location.getFile();
-
-        File demoPluginDir = new File(file, "../../../demo-plugin/target/demo-plugin@0.0.1-SNAPSHOT");
-
-        File demoAgentDir = new File(file, "../../../demo-agent/target/demo-agent@0.0.1-SNAPSHOT");
-
-        File dubboDemoPluginDir = new File(file, "../../../dubbo-test-plugin/target/dubbo-test-plugin@0.0.1-SNAPSHOT");
-
         Instrumentation instrumentation = ByteBuddyAgent.install();
-
-        Map<String, String> map = new HashMap<String, String>();
-
-        map.put("oneagent.extPlugins", demoPluginDir.getAbsolutePath() + "," + demoAgentDir.getAbsolutePath() + ","
-                + dubboDemoPluginDir.getAbsolutePath());
-
-        String args = FeatureCodec.DEFAULT_COMMANDLINE_CODEC.toString(map);
+        String args = AgentArgsUtils.agentArgs();
 
         System.err.println("args: " + args);
         BootstrapAgent.agentmain(args, instrumentation);

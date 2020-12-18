@@ -13,6 +13,13 @@
     <dependencies>
         <dependency>
             <groupId>com.alibaba.oneagent</groupId>
+            <artifactId>one-java-agent-spy</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.oneagent</groupId>
             <artifactId>one-java-agent-plugin</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -47,6 +54,7 @@
         <dependency>
             <groupId>org.zeroturnaround</groupId>
             <artifactId>zt-exec</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -154,7 +162,13 @@
                             <tasks>
                                 <zip destfile="${project.build.directory}/oneagent@${project.version}.zip">
                                     <fileset dir="${project.build.directory}" includes="one-java-agent.jar"/>
+                                    <fileset dir="${project.build.directory}/../../one-java-agent-spy/target" includes="one-java-agent-spy.jar"/>
                                 </zip>
+                                <!-- for test -->
+                                <unzip
+                                    src="${project.build.directory}/oneagent@${project.version}.zip"
+                                    dest="${project.build.directory}/oneagent">
+                                </unzip>
                             </tasks>
                         </configuration>
                         <goals>
@@ -188,6 +202,11 @@
                                                 dir="${project.build.directory}"
                                                 includes="one-java-agent.jar" />
                                         </zip>
+                                        <!-- for test -->
+                                        <unzip
+                                            src="${project.build.directory}/oneagent@${project.version}.zip"
+                                            dest="${project.build.directory}/oneagent">
+                                        </unzip>
                                         <delete
                                             dir="${user.home}/oneagent/core/oneagent@${pom.version}">
                                         </delete>

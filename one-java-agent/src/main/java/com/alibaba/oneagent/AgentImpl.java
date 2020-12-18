@@ -19,8 +19,6 @@ import com.alibaba.oneagent.plugin.PluginManager;
 import com.alibaba.oneagent.plugin.PluginManagerImpl;
 import com.alibaba.oneagent.service.ComponentManager;
 import com.alibaba.oneagent.service.ComponentManagerImpl;
-import com.alibaba.oneagent.service.TransformerManager;
-import com.alibaba.oneagent.service.TransformerManagerImpl;
 import com.alibaba.oneagent.utils.FeatureCodec;
 
 /**
