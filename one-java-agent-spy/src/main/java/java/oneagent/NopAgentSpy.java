@@ -5,8 +5,8 @@ package java.oneagent;
  * @author hengyunabc 2020-12-11
  *
  */
-public class NopAgent implements Agent {
-    public static final Agent INSTANCE = new NopAgent();
+public class NopAgentSpy implements AgentSpy {
+    public static final AgentSpy INSTANCE = new NopAgentSpy();
 
     @Override
     public Class<?> loadClass(String name) {

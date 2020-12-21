@@ -1,25 +1,40 @@
 package com.alibaba.oneagent;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.instrument.Instrumentation;
+import java.lang.instrument.UnmodifiableClassException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.security.CodeSource;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.jar.JarFile;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.bytekit.asm.instrument.InstrumentConfig;
+import com.alibaba.bytekit.asm.instrument.InstrumentParseResult;
+import com.alibaba.bytekit.asm.instrument.InstrumentTransformer;
+import com.alibaba.bytekit.asm.matcher.SimpleClassMatcher;
+import com.alibaba.bytekit.utils.AsmUtils;
+import com.alibaba.oneagent.inst.ClassLoader_Instrument;
 import com.alibaba.oneagent.plugin.PluginException;
 import com.alibaba.oneagent.plugin.PluginManager;
 import com.alibaba.oneagent.plugin.PluginManagerImpl;
 import com.alibaba.oneagent.service.ComponentManager;
 import com.alibaba.oneagent.service.ComponentManagerImpl;
 import com.alibaba.oneagent.utils.FeatureCodec;
+import com.alibaba.oneagent.utils.IOUtils;
+import com.alibaba.oneagent.utils.InstrumentationUtils;
 
 /**
  * 
@@ -27,6 +42,14 @@ import com.alibaba.oneagent.utils.FeatureCodec;
  *
  */
 public class AgentImpl implements Agent {
+    private static final String ONEAGENT_HOME = "oneagent.home";
+    public static final String ONEAGENT_EXTPLUGINS = "oneagent.extPlugins";
+    public static final String ONEAGENT_ENHANCELOADERS = "oneagent.enhanceLoaders";
+
+    private static final String ONE_JAVA_AGENT_SPY_JAR = "one-java-agent-spy.jar";
+
+    private Instrumentation instrumentation;
+    private InstrumentTransformer classLoaderInstrumentTransformer;
 
     private PluginManager pluginManager;
     private ComponentManager componentManager;
@@ -34,26 +57,65 @@ public class AgentImpl implements Agent {
 
     @Override
     public void init(String args, final Instrumentation inst, boolean premain) {
+        this.instrumentation = inst;
         args = decodeArg(args);
         initLogger();
 
         Map<String, String> map = FeatureCodec.DEFAULT_COMMANDLINE_CODEC.toMap(args);
 
-        String oneagentHome = map.get("oneagent.home");
+        String oneagentHome = map.get(ONEAGENT_HOME);
 
         if (oneagentHome == null) {
             CodeSource codeSource = this.getClass().getProtectionDomain().getCodeSource();
             // ~/oneagent/core/oneagent@0.0.1-SNAPSHOT/one-java-agent.jar
-            URL agentJarLocation = codeSource.getLocation();
+            String agentJarFile = codeSource.getLocation().getFile();
             // ~/oneagent/core
-            oneagentHome = new File(agentJarLocation.getFile()).getParentFile().getParentFile().getParent();
-            map.put("oneagent.home", oneagentHome);
+            oneagentHome = new File(agentJarFile).getParentFile().getParentFile().getParent();
+            map.put(ONEAGENT_HOME, oneagentHome);
+
+            // append spy jar
+            InputStream spyJarInputStream = this.getClass().getClassLoader()
+                    .getResourceAsStream(ONE_JAVA_AGENT_SPY_JAR);
+            FileOutputStream out = null;
+            if (spyJarInputStream != null) {
+                try {
+                    // TODO 是否要避免多次 append，没找到是否直接启动失败
+                    File tempFile = File.createTempFile(
+                            ONE_JAVA_AGENT_SPY_JAR.substring(0, ONE_JAVA_AGENT_SPY_JAR.length() - ".jar".length()),
+                            ".jar");
+                    tempFile.deleteOnExit();
+                    out = new FileOutputStream(tempFile);
+                    IOUtils.copy(spyJarInputStream, out);
+                    logger.info("extract {} to {}", ONE_JAVA_AGENT_SPY_JAR, tempFile.getAbsolutePath());
+                    instrumentation.appendToBootstrapClassLoaderSearch(new JarFile(tempFile.getAbsoluteFile()));
+                } catch (Throwable e) {
+                    logger.error("try to append agent spy jar to BootstrapClassLoaderSearch error", e);
+                } finally {
+                    IOUtils.close(spyJarInputStream);
+                    IOUtils.close(out);
+                }
+            } else {
+                logger.error("can not find resource {}", ONE_JAVA_AGENT_SPY_JAR);
+            }
         }
 
-        logger.info("oneagent home: " + map.get("oneagent.home"));
-        
+        logger.info("oneagent home: " + map.get(ONEAGENT_HOME));
+
         componentManager = new ComponentManagerImpl(inst);
         componentManager.initComponents();
+
+        AgentSpyImpl.initAgentSpy(componentManager);
+
+        String enhanceLoaders = map.get(ONEAGENT_ENHANCELOADERS);
+        if (enhanceLoaders == null) {
+            enhanceLoaders = ClassLoader.class.getName();
+        }
+
+        try {
+            this.enhanceClassLoader(enhanceLoaders);
+        } catch (Exception e) {
+            logger.error("enhanceLoaders error", e);
+        }
 
         Properties properties = new Properties();
         properties.putAll(map);
@@ -64,7 +126,7 @@ public class AgentImpl implements Agent {
 
             // extPlugins
             List<URL> extPluginlLoacations = new ArrayList<URL>();
-            String extStr = map.get("oneagent.extPlugins");
+            String extStr = map.get(ONEAGENT_EXTPLUGINS);
             if (extStr != null) {
                 String[] strings = extStr.split(",");
                 for (String s : strings) {
@@ -75,8 +137,8 @@ public class AgentImpl implements Agent {
                 }
             }
 
-            pluginManager = new PluginManagerImpl(inst, componentManager, properties, new File(oneagentHome, "plugins").toURI().toURL(),
-                    extPluginlLoacations);
+            pluginManager = new PluginManagerImpl(inst, componentManager, properties,
+                    new File(oneagentHome, "plugins").toURI().toURL(), extPluginlLoacations);
 
             pluginManager.scanPlugins();
 
@@ -108,6 +170,35 @@ public class AgentImpl implements Agent {
 
     private void initLogger() {
         logger = LoggerFactory.getLogger(AgentImpl.class);
+    }
+
+    void enhanceClassLoader(String enhanceLoaders) throws IOException, UnmodifiableClassException {
+        if (enhanceLoaders == null) {
+            return;
+        }
+        Set<String> loaders = new HashSet<String>();
+        for (String s : enhanceLoaders.split(",")) {
+            loaders.add(s.trim());
+        }
+
+        // 增强 ClassLoader#loadClsss ，提供机制可以加载插件方的类
+        byte[] classBytes = IOUtils.getBytes(this.getClass().getClassLoader()
+                .getResourceAsStream(ClassLoader_Instrument.class.getName().replace('.', '/') + ".class"));
+
+        SimpleClassMatcher matcher = new SimpleClassMatcher(loaders);
+        InstrumentConfig instrumentConfig = new InstrumentConfig(AsmUtils.toClassNode(classBytes), matcher);
+
+        InstrumentParseResult instrumentParseResult = new InstrumentParseResult();
+        instrumentParseResult.addInstrumentConfig(instrumentConfig);
+        classLoaderInstrumentTransformer = new InstrumentTransformer(instrumentParseResult);
+        instrumentation.addTransformer(classLoaderInstrumentTransformer, true);
+
+        if (loaders.size() == 1 && loaders.contains(ClassLoader.class.getName())) {
+            // 如果只增强 java.lang.ClassLoader，可以减少查找过程
+            instrumentation.retransformClasses(ClassLoader.class);
+        } else {
+            InstrumentationUtils.trigerRetransformClasses(instrumentation, loaders);
+        }
     }
 
     private static String decodeArg(String arg) {

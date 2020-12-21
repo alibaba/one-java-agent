@@ -6,7 +6,7 @@ package java.oneagent;
  * @author hengyunabc 2020-12-11
  *
  */
-public interface Agent {
+public interface AgentSpy {
 
     /**
      * 用OneAgent里注册的Handler来加载类
