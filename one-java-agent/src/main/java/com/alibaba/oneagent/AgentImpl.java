@@ -47,6 +47,7 @@ public class AgentImpl implements Agent {
     public static final String ONEAGENT_ENHANCELOADERS = "oneagent.enhanceLoaders";
 
     private static final String ONE_JAVA_AGENT_SPY_JAR = "one-java-agent-spy.jar";
+    private static final String PLUGINS = "plugins";
 
     private Instrumentation instrumentation;
     private InstrumentTransformer classLoaderInstrumentTransformer;
@@ -66,11 +67,30 @@ public class AgentImpl implements Agent {
         String oneagentHome = map.get(ONEAGENT_HOME);
 
         if (oneagentHome == null) {
+            /**
+             * <pre>
+             * 查找oneagent home的逻辑：
+             * 1. 从jar所在的目录向上找，如果有 plugins目录，则认为是 oneagent home
+             * 2. 向上最多找两层目录
+             * 3. 兼容多种部署形式，比如 ~/oneagent/core/oneagent@0.0.1-SNAPSHOT/one-java-agent.jar ，插件目录在
+             *    ~/oneagent/plugins ；
+             *    也可能是  one-java-agent.jar 和 plugins在同一目录下
+             * </pre>
+             */
             CodeSource codeSource = this.getClass().getProtectionDomain().getCodeSource();
-            // ~/oneagent/core/oneagent@0.0.1-SNAPSHOT/one-java-agent.jar
             String agentJarFile = codeSource.getLocation().getFile();
-            // ~/oneagent/core
-            oneagentHome = new File(agentJarFile).getParentFile().getParentFile().getParent();
+
+            File agentJarDir = new File(agentJarFile).getParentFile();
+            if (new File(agentJarDir, PLUGINS).exists()) {
+                oneagentHome = agentJarDir.getAbsolutePath();
+            } else if (new File(agentJarDir.getParentFile(), PLUGINS).exists()) {
+                oneagentHome = agentJarDir.getParent();
+            } else {
+                // ~/oneagent/core/oneagent@0.0.1-SNAPSHOT/one-java-agent.jar
+                // ~/oneagent/core
+                oneagentHome = agentJarDir.getParentFile().getParent();
+            }
+
             map.put(ONEAGENT_HOME, oneagentHome);
 
             // append spy jar
