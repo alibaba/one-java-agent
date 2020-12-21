@@ -19,7 +19,7 @@ public class BootstrapAgentTest {
     @Rule
     public OutputCapture capture = new OutputCapture();
 
-    @Test
+    //@Test
     public void test() {
         Instrumentation instrumentation = ByteBuddyAgent.install();
         String args = AgentArgsUtils.agentArgs();

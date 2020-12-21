@@ -28,7 +28,7 @@ public class AgentArgsUtils {
 
         Map<String, String> map = new HashMap<String, String>();
 
-        map.put("oneagent.extPlugins", demoPluginDir.getAbsolutePath() + "," + demoAgentDir.getAbsolutePath() + ","
+        map.put(AgentImpl.ONEAGENT_EXTPLUGINS, demoPluginDir.getAbsolutePath() + "," + demoAgentDir.getAbsolutePath() + ","
                 + dubboDemoPluginDir.getAbsolutePath());
 
         String args = FeatureCodec.DEFAULT_COMMANDLINE_CODEC.toString(map);

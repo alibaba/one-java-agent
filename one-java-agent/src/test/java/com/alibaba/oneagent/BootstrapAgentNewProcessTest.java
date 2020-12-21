@@ -2,6 +2,7 @@ package com.alibaba.oneagent;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 import org.assertj.core.api.Assertions;
@@ -15,7 +16,7 @@ import org.zeroturnaround.exec.ProcessResult;
  * @author hengyunabc 2020-12-18
  *
  */
-public class AgentNewProcessTest {
+public class BootstrapAgentNewProcessTest {
 
     @Test
     public void test() throws InvalidExitValueException, IOException, InterruptedException, TimeoutException {
@@ -37,9 +38,20 @@ public class AgentNewProcessTest {
 
         String agentStr = "-javaagent:" + oneagentJarFile.getAbsolutePath() + "=" + args;
 
-        ProcessResult result = new ProcessExecutor()
+        ProcessExecutor processExecutor = new ProcessExecutor()
                 .command(javaPath.getAbsolutePath(), agentStr, "-cp", testClassesDir, TTT.class.getName())
-                .readOutput(true).execute();
+                .readOutput(true);
+
+        List<String> command = processExecutor.getCommand();
+
+        StringBuilder sb = new StringBuilder();
+        for (String str : command) {
+            sb.append(str).append(' ');
+        }
+
+        System.err.println(sb.toString());
+
+        ProcessResult result = processExecutor.execute();
 
         String outputString = result.outputString();
 

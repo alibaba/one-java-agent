@@ -160,9 +160,18 @@
                         <phase>package</phase>
                         <configuration>
                             <tasks>
+                                <!-- add spy jar into one-java-agent.jar -->
+                                <zip destfile="${project.build.directory}/one-java-agent2.jar">
+                                    <zipfileset
+                                        src="${project.build.directory}/one-java-agent.jar" />
+                                    <fileset
+                                        dir="${project.build.directory}/../../one-java-agent-spy/target"
+                                        includes="one-java-agent-spy.jar" />
+                                </zip>
+                                <move file="${project.build.directory}/one-java-agent2.jar"
+                                    tofile="${project.build.directory}/one-java-agent.jar" />
                                 <zip destfile="${project.build.directory}/oneagent@${project.version}.zip">
                                     <fileset dir="${project.build.directory}" includes="one-java-agent.jar"/>
-                                    <fileset dir="${project.build.directory}/../../one-java-agent-spy/target" includes="one-java-agent-spy.jar"/>
                                 </zip>
                                 <!-- for test -->
                                 <unzip
@@ -196,6 +205,16 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
+                                        <!-- add spy jar into one-java-agent.jar -->
+                                        <zip destfile="${project.build.directory}/one-java-agent2.jar">
+                                            <zipfileset
+                                                src="${project.build.directory}/one-java-agent.jar" />
+                                            <fileset
+                                                dir="${project.build.directory}/../../one-java-agent-spy/target"
+                                                includes="one-java-agent-spy.jar" />
+                                        </zip>
+                                        <move file="${project.build.directory}/one-java-agent2.jar"
+                                            tofile="${project.build.directory}/one-java-agent.jar" />
                                         <zip
                                             destfile="${project.build.directory}/oneagent@${project.version}.zip">
                                             <fileset
