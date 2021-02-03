@@ -61,7 +61,7 @@ public class ComponentManagerImpl implements ComponentManager {
 
     private List<Component> scanForAvailableComponents() {
         List<Component> result = new ArrayList<Component>();
-        ServiceLoader<Component> components = ServiceLoader.load(Component.class);
+        ServiceLoader<Component> components = ServiceLoader.load(Component.class, this.getClass().getClassLoader());
         for (Component component : components) {
             result.add(component);
         }
