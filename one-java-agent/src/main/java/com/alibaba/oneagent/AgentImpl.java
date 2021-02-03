@@ -92,34 +92,34 @@ public class AgentImpl implements Agent {
             }
 
             map.put(ONEAGENT_HOME, oneagentHome);
-
-            // append spy jar
-            InputStream spyJarInputStream = this.getClass().getClassLoader()
-                    .getResourceAsStream(ONE_JAVA_AGENT_SPY_JAR);
-            FileOutputStream out = null;
-            if (spyJarInputStream != null) {
-                try {
-                    // TODO 是否要避免多次 append，没找到是否直接启动失败
-                    File tempFile = File.createTempFile(
-                            ONE_JAVA_AGENT_SPY_JAR.substring(0, ONE_JAVA_AGENT_SPY_JAR.length() - ".jar".length()),
-                            ".jar");
-                    tempFile.deleteOnExit();
-                    out = new FileOutputStream(tempFile);
-                    IOUtils.copy(spyJarInputStream, out);
-                    logger.info("extract {} to {}", ONE_JAVA_AGENT_SPY_JAR, tempFile.getAbsolutePath());
-                    instrumentation.appendToBootstrapClassLoaderSearch(new JarFile(tempFile.getAbsoluteFile()));
-                } catch (Throwable e) {
-                    logger.error("try to append agent spy jar to BootstrapClassLoaderSearch error", e);
-                } finally {
-                    IOUtils.close(spyJarInputStream);
-                    IOUtils.close(out);
-                }
-            } else {
-                logger.error("can not find resource {}", ONE_JAVA_AGENT_SPY_JAR);
-            }
         }
 
         logger.info("oneagent home: " + map.get(ONEAGENT_HOME));
+
+        // append spy jar
+        InputStream spyJarInputStream = this.getClass().getClassLoader()
+                .getResourceAsStream(ONE_JAVA_AGENT_SPY_JAR);
+        FileOutputStream out = null;
+        if (spyJarInputStream != null) {
+            try {
+                // TODO 是否要避免多次 append，没找到是否直接启动失败
+                File tempFile = File.createTempFile(
+                        ONE_JAVA_AGENT_SPY_JAR.substring(0, ONE_JAVA_AGENT_SPY_JAR.length() - ".jar".length()),
+                        ".jar");
+                tempFile.deleteOnExit();
+                out = new FileOutputStream(tempFile);
+                IOUtils.copy(spyJarInputStream, out);
+                logger.info("extract {} to {}", ONE_JAVA_AGENT_SPY_JAR, tempFile.getAbsolutePath());
+                instrumentation.appendToBootstrapClassLoaderSearch(new JarFile(tempFile.getAbsoluteFile()));
+            } catch (Throwable e) {
+                logger.error("try to append agent spy jar to BootstrapClassLoaderSearch error", e);
+            } finally {
+                IOUtils.close(spyJarInputStream);
+                IOUtils.close(out);
+            }
+        } else {
+            logger.error("can not find resource {}", ONE_JAVA_AGENT_SPY_JAR);
+        }
 
         componentManager = new ComponentManagerImpl(inst);
         componentManager.initComponents();
