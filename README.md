@@ -64,4 +64,5 @@ agentJarPath=demo-agent.jar
 ## 编译开发
 
 * 本项目依赖 bytekit: https://github.com/alibaba/bytekit ，可能需要先`mvn clean install` bytekit
-* `mvn clean package -P local`会打包后安装最新到本地 `~/oneoneagent` 目录下
+* 执行测试： `mvn clean package -DskipTests && mvn test`
+* `mvn clean package -P local -DskipTests`会打包后安装最新到本地 `~/oneoneagent` 目录下
