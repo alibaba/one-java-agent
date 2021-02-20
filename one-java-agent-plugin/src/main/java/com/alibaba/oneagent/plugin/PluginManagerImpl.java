@@ -8,9 +8,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,13 +44,13 @@ public class PluginManagerImpl implements PluginManager {
 
     private List<URL> extPluginlLoacations = new ArrayList<URL>();
 
-    public PluginManagerImpl(Instrumentation instrumentation, ComponentManager componentManager,
-            Properties properties, URL scanPluginLocation) {
+    public PluginManagerImpl(Instrumentation instrumentation, ComponentManager componentManager, Properties properties,
+            URL scanPluginLocation) {
         this(instrumentation, componentManager, properties, scanPluginLocation, Collections.<URL>emptyList());
     }
 
-    public PluginManagerImpl(Instrumentation instrumentation, ComponentManager componentManager,
-            Properties properties, URL scanPluginLocation, List<URL> extPluginlLoacations) {
+    public PluginManagerImpl(Instrumentation instrumentation, ComponentManager componentManager, Properties properties,
+            URL scanPluginLocation, List<URL> extPluginlLoacations) {
         this.instrumentation = instrumentation;
         this.componentManager = componentManager;
         this.properties = properties;
@@ -112,8 +117,8 @@ public class PluginManagerImpl implements PluginManager {
             plugin = new TraditionalPlugin(location.toURI().toURL(), instrumentation, parentClassLoader, properties);
 
         } else {
-            plugin = new OneAgentPlugin(location.toURI().toURL(), instrumentation, componentManager,
-                    parentClassLoader, properties);
+            plugin = new OneAgentPlugin(location.toURI().toURL(), instrumentation, componentManager, parentClassLoader,
+                    properties);
         }
         if (!containsPlugin(plugin.name())) {
             plugins.add(plugin);
@@ -222,15 +227,65 @@ public class PluginManagerImpl implements PluginManager {
     @Override
     synchronized public void initPlugins() throws PluginException {
         logger.info("Init available plugins");
+        parallelInitPlugins();
+    }
+
+    private void initOnePlugin(Plugin plugin) throws PluginException {
+        if (plugin.state() == PluginState.ENABLED) {
+            updateState(plugin, PluginState.INITING);
+            logger.info("Init plugin, name: {}", plugin.name());
+            plugin.init();
+            logger.info("Init plugin success, name: {}", plugin.name());
+            updateState(plugin, PluginState.INITED);
+        } else {
+            logger.debug("skip init plugin, name: {}, state: {}", plugin.name(), plugin.state());
+        }
+    }
+
+    private void parallelInitPlugins() throws PluginException {
+        // plugins本身已是有序
+        Map<Integer, List<Plugin>> orderToPlugins = new LinkedHashMap<Integer, List<Plugin>>();
         for (Plugin plugin : plugins) {
-            if (plugin.state() == PluginState.ENABLED) {
-                updateState(plugin, PluginState.INITING);
-                logger.info("Init plugin, name: {}", plugin.name());
-                plugin.init();
-                logger.info("Init plugin success, name: {}", plugin.name());
-                updateState(plugin, PluginState.INITED);
-            } else {
-                logger.debug("skip init plugin, name: {}, state: {}", plugin.name(), plugin.state());
+            List<Plugin> list = orderToPlugins.get(plugin.order());
+            if (list == null) {
+                list = new ArrayList<Plugin>();
+                orderToPlugins.put(plugin.order(), list);
+            }
+            list.add(plugin);
+        }
+
+        for (Entry<Integer, List<Plugin>> entry : orderToPlugins.entrySet()) {
+            List<Plugin> sameOrderPlugins = entry.getValue();
+
+            // init plugins
+            final CountDownLatch latch = new CountDownLatch(sameOrderPlugins.size());
+            final AtomicInteger successCounter = new AtomicInteger(0);
+            for (final Plugin plugin : sameOrderPlugins) {
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            initOnePlugin(plugin);
+                        } catch (PluginException e) {
+                            logger.error("init plugin error, name: {}", plugin.name(), e);
+                        } finally {
+                            latch.countDown();
+                        }
+                        successCounter.incrementAndGet();
+                    }
+
+                }, "oneagent plugin " + plugin.name() + " init");
+                thread.start();
+            }
+
+            try {
+                latch.await();
+                if (successCounter.get() != sameOrderPlugins.size()) {
+                    throw new PluginException("init plugin error, please check oneagent log");
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new PluginException("init oneagent plugin error", e);
             }
         }
     }
@@ -238,15 +293,65 @@ public class PluginManagerImpl implements PluginManager {
     @Override
     synchronized public void startPlugins() throws PluginException {
         logger.info("Starting available plugins");
+        parallelStartPlugins();
+    }
+
+    private void startOnePlugin(Plugin plugin) throws PluginException {
+        if (plugin.state() == PluginState.INITED) {
+            updateState(plugin, PluginState.STARTING);
+            logger.info("Start plugin, name: {}", plugin.name());
+            plugin.start();
+            logger.info("Start plugin success, name: {}", plugin.name());
+            updateState(plugin, PluginState.STARTED);
+        } else {
+            logger.debug("skip start plugin, name: {}, state: {}", plugin.name(), plugin.state());
+        }
+    }
+
+    private void parallelStartPlugins() throws PluginException {
+        // plugins本身已是有序
+        Map<Integer, List<Plugin>> orderToPlugins = new LinkedHashMap<Integer, List<Plugin>>();
         for (Plugin plugin : plugins) {
-            if (plugin.state() == PluginState.INITED) {
-                updateState(plugin, PluginState.STARTING);
-                logger.info("Start plugin, name: {}", plugin.name());
-                plugin.start();
-                logger.info("Start plugin success, name: {}", plugin.name());
-                updateState(plugin, PluginState.STARTED);
-            } else {
-                logger.debug("skip start plugin, name: {}, state: {}", plugin.name(), plugin.state());
+            List<Plugin> list = orderToPlugins.get(plugin.order());
+            if (list == null) {
+                list = new ArrayList<Plugin>();
+                orderToPlugins.put(plugin.order(), list);
+            }
+            list.add(plugin);
+        }
+
+        for (Entry<Integer, List<Plugin>> entry : orderToPlugins.entrySet()) {
+            List<Plugin> sameOrderPlugins = entry.getValue();
+
+            // start plugins
+            final CountDownLatch latch = new CountDownLatch(sameOrderPlugins.size());
+            final AtomicInteger successCounter = new AtomicInteger(0);
+            for (final Plugin plugin : sameOrderPlugins) {
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            startOnePlugin(plugin);
+                        } catch (PluginException e) {
+                            logger.error("start plugin error, name: {}", plugin.name(), e);
+                        } finally {
+                            latch.countDown();
+                        }
+                        successCounter.incrementAndGet();
+                    }
+
+                }, "oneagent plugin " + plugin.name() + " start");
+                thread.start();
+            }
+
+            try {
+                latch.await();
+                if (successCounter.get() != sameOrderPlugins.size()) {
+                    throw new PluginException("start plugin error, please check oneagent log");
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new PluginException("start oneagent plugin error", e);
             }
         }
     }
