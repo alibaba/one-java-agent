@@ -18,7 +18,7 @@ import com.alibaba.bytekit.asm.instrument.InstrumentConfig;
 import com.alibaba.bytekit.asm.instrument.InstrumentParseResult;
 import com.alibaba.bytekit.asm.instrument.InstrumentTemplate;
 import com.alibaba.bytekit.asm.instrument.InstrumentTransformer;
-import com.alibaba.oneagent.plugin.properties.PropertiesInjectUtils;
+import com.alibaba.oneagent.plugin.config.PluginConfigImpl;
 import com.alibaba.oneagent.service.ComponentManager;
 import com.alibaba.oneagent.service.TransformerManager;
 import com.alibaba.oneagent.utils.IOUtils;
@@ -30,7 +30,7 @@ import com.alibaba.oneagent.utils.PropertiesUtils;
  *
  */
 public class OneAgentPlugin implements Plugin {
-    private static final Logger logger = LoggerFactory.getLogger(PluginManagerImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(OneAgentPlugin.class);
 
     public static final int DEFAULT_ORDER = 1000;
 
@@ -39,7 +39,7 @@ public class OneAgentPlugin implements Plugin {
     private ClassLoader parentClassLoader;
     private PlguinClassLoader classLoader;
 
-    private PluginConfig pluginConfig;
+    private PluginConfigImpl pluginConfig;
 
     private volatile PluginState state;
 
@@ -70,13 +70,7 @@ public class OneAgentPlugin implements Plugin {
             throw new PluginException("load plugin properties error, path: " + pluginPropertiesFile.getAbsolutePath());
         }
 
-        Properties tmp = new Properties();
-        tmp.putAll(gobalProperties);
-        tmp.putAll(properties);
-        properties = tmp;
-
-        pluginConfig = new PluginConfig();
-        PropertiesInjectUtils.inject(properties, pluginConfig);
+        pluginConfig = new PluginConfigImpl(gobalProperties, properties);
 
         String classpath = pluginConfig.getClasspath();
 
@@ -92,6 +86,11 @@ public class OneAgentPlugin implements Plugin {
 
     @Override
     public boolean enabled() throws PluginException {
+        if (this.pluginConfig.isEnabled() == false) {
+            return false;
+        }
+        //检查全局配置
+
         boolean enabled = false;
         try {
             Class<?> activatorClass = classLoader.loadClass(pluginConfig.getPluginActivator());

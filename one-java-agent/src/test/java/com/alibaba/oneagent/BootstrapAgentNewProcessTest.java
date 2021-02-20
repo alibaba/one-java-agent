@@ -2,7 +2,10 @@ package com.alibaba.oneagent;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.concurrent.TimeoutException;
 
 import org.assertj.core.api.Assertions;
@@ -18,8 +21,12 @@ import org.zeroturnaround.exec.ProcessResult;
  */
 public class BootstrapAgentNewProcessTest {
 
-    @Test
-    public void test() throws InvalidExitValueException, IOException, InterruptedException, TimeoutException {
+    private String runProcess() throws InvalidExitValueException, IOException, InterruptedException, TimeoutException {
+        return runProcess(new Properties());
+    }
+
+    private String runProcess(Properties properties)
+            throws InvalidExitValueException, IOException, InterruptedException, TimeoutException {
         File javaPath = ProcessUtils.findJava();
 
         String testClassesDir = this.getClass().getProtectionDomain().getCodeSource().getLocation().getFile();
@@ -38,9 +45,20 @@ public class BootstrapAgentNewProcessTest {
 
         String agentStr = "-javaagent:" + oneagentJarFile.getAbsolutePath() + "=" + args;
 
-        ProcessExecutor processExecutor = new ProcessExecutor()
-                .command(javaPath.getAbsolutePath(), agentStr, "-cp", testClassesDir, TTT.class.getName())
-                .readOutput(true);
+        List<String> commands = new ArrayList<String>();
+        commands.add(javaPath.getAbsolutePath());
+        commands.add(agentStr);
+        commands.add("-cp");
+        commands.add(testClassesDir);
+
+        for (Entry<Object, Object> entry : properties.entrySet()) {
+            entry.getKey();
+            commands.add("-D" + entry.getKey() + "=" + entry.getValue());
+        }
+
+        commands.add(TTT.class.getName());
+
+        ProcessExecutor processExecutor = new ProcessExecutor().command(commands).readOutput(true);
 
         List<String> command = processExecutor.getCommand();
 
@@ -54,11 +72,37 @@ public class BootstrapAgentNewProcessTest {
         ProcessResult result = processExecutor.execute();
 
         String outputString = result.outputString();
-
-        System.err.println(outputString);
-
-        Assertions.assertThat(outputString).contains("enabled TestActivator").contains("init TestActivator")
-                .contains("start TestActivator").contains(TTT.STR);
+        return outputString;
     }
 
+    @Test
+    public void test() throws InvalidExitValueException, IOException, InterruptedException, TimeoutException {
+
+        String processOutput = runProcess();
+        System.err.println(processOutput);
+
+        String className = "com.activator.test.DemoActivator";
+
+        Assertions.assertThat(processOutput).contains("enabled " + className).contains("init " + className)
+                .contains("start " + className).contains(TTT.STR);
+
+        Assertions.assertThat(processOutput).contains("DemoAgent started.");
+    }
+
+    @Test
+    public void testDisablePlugin()
+            throws InvalidExitValueException, IOException, InterruptedException, TimeoutException {
+        Properties properties = new Properties();
+        properties.setProperty("oneagent.plugin." + "demo-plugin.enabled", "" + false);
+        properties.setProperty("oneagent.plugin." + "demo-agent.enabled", "" + false);
+
+        String processOutput = runProcess(properties);
+        System.err.println(processOutput);
+
+        String className = "com.activator.test.DemoActivator";
+
+        Assertions.assertThat(processOutput).doesNotContain("enabled " + className).doesNotContain("init " + className)
+                .doesNotContain("start " + className).contains(TTT.STR);
+        Assertions.assertThat(processOutput).doesNotContain("DemoAgent started.");
+    }
 }
