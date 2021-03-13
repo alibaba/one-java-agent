@@ -1,11 +1,10 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.alibaba.oneagent</groupId>
         <artifactId>one-java-agent-parent</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>one-java-agent</artifactId>
@@ -162,21 +161,15 @@
                             <tasks>
                                 <!-- add spy jar into one-java-agent.jar -->
                                 <zip destfile="${project.build.directory}/one-java-agent2.jar">
-                                    <zipfileset
-                                        src="${project.build.directory}/one-java-agent.jar" />
-                                    <fileset
-                                        dir="${project.build.directory}/../../one-java-agent-spy/target"
-                                        includes="one-java-agent-spy.jar" />
+                                    <zipfileset src="${project.build.directory}/one-java-agent.jar" />
+                                    <fileset dir="${project.build.directory}/../../one-java-agent-spy/target" includes="one-java-agent-spy.jar" />
                                 </zip>
-                                <move file="${project.build.directory}/one-java-agent2.jar"
-                                    tofile="${project.build.directory}/one-java-agent.jar" />
+                                <move file="${project.build.directory}/one-java-agent2.jar" tofile="${project.build.directory}/one-java-agent.jar" />
                                 <zip destfile="${project.build.directory}/oneagent@${project.version}.zip">
-                                    <fileset dir="${project.build.directory}" includes="one-java-agent.jar"/>
+                                    <fileset dir="${project.build.directory}" includes="one-java-agent.jar" />
                                 </zip>
                                 <!-- for test -->
-                                <unzip
-                                    src="${project.build.directory}/oneagent@${project.version}.zip"
-                                    dest="${project.build.directory}/oneagent">
+                                <unzip src="${project.build.directory}/oneagent@${project.version}.zip" dest="${project.build.directory}/oneagent">
                                 </unzip>
                             </tasks>
                         </configuration>
@@ -207,31 +200,19 @@
                                     <tasks>
                                         <!-- add spy jar into one-java-agent.jar -->
                                         <zip destfile="${project.build.directory}/one-java-agent2.jar">
-                                            <zipfileset
-                                                src="${project.build.directory}/one-java-agent.jar" />
-                                            <fileset
-                                                dir="${project.build.directory}/../../one-java-agent-spy/target"
-                                                includes="one-java-agent-spy.jar" />
+                                            <zipfileset src="${project.build.directory}/one-java-agent.jar" />
+                                            <fileset dir="${project.build.directory}/../../one-java-agent-spy/target" includes="one-java-agent-spy.jar" />
                                         </zip>
-                                        <move file="${project.build.directory}/one-java-agent2.jar"
-                                            tofile="${project.build.directory}/one-java-agent.jar" />
-                                        <zip
-                                            destfile="${project.build.directory}/oneagent@${project.version}.zip">
-                                            <fileset
-                                                dir="${project.build.directory}"
-                                                includes="one-java-agent.jar" />
+                                        <move file="${project.build.directory}/one-java-agent2.jar" tofile="${project.build.directory}/one-java-agent.jar" />
+                                        <zip destfile="${project.build.directory}/oneagent@${project.version}.zip">
+                                            <fileset dir="${project.build.directory}" includes="one-java-agent.jar" />
                                         </zip>
                                         <!-- for test -->
-                                        <unzip
-                                            src="${project.build.directory}/oneagent@${project.version}.zip"
-                                            dest="${project.build.directory}/oneagent">
+                                        <unzip src="${project.build.directory}/oneagent@${project.version}.zip" dest="${project.build.directory}/oneagent">
                                         </unzip>
-                                        <delete
-                                            dir="${user.home}/oneagent/core/oneagent@${pom.version}">
+                                        <delete dir="${user.home}/oneagent/core/oneagent@${pom.version}">
                                         </delete>
-                                        <unzip
-                                            src="${project.build.directory}/oneagent@${project.version}.zip"
-                                            dest="${user.home}/oneagent/core/oneagent@${pom.version}">
+                                        <unzip src="${project.build.directory}/oneagent@${project.version}.zip" dest="${user.home}/oneagent/core/oneagent@${pom.version}">
                                         </unzip>
                                     </tasks>
                                 </configuration>
