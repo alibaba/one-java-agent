@@ -2,6 +2,7 @@ package com.alibaba.oneagent;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 
 import org.junit.Rule;
@@ -20,7 +21,7 @@ public class BootstrapAgentTest {
     public OutputCapture capture = new OutputCapture();
 
     //@Test
-    public void test() {
+    public void test() throws IOException {
         Instrumentation instrumentation = ByteBuddyAgent.install();
         String args = AgentArgsUtils.agentArgs();
 
