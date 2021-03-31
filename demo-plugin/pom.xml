@@ -57,7 +57,7 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <finalName>${pom.artifactId}@${pom.version}</finalName>
+                            <finalName>${project.artifactId}@${project.version}</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
                             <descriptors>
                                 <descriptor>src/main/assembly/assembly.xml</descriptor>
@@ -86,10 +86,10 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <delete dir="${user.home}/oneagent/plugins/${pom.artifactId}@${pom.version}">
+                                        <delete dir="${user.home}/oneagent/plugins/${project.artifactId}@${project.version}">
                                         </delete>
-                                        <copy todir="${user.home}/oneagent/plugins/${pom.artifactId}@${pom.version}">
-                                            <fileset dir="${project.build.directory}/${pom.artifactId}@${pom.version}" />
+                                        <copy todir="${user.home}/oneagent/plugins/${project.artifactId}@${project.version}">
+                                            <fileset dir="${project.build.directory}/${project.artifactId}@${project.version}" />
                                         </copy>
                                     </tasks>
                                 </configuration>
