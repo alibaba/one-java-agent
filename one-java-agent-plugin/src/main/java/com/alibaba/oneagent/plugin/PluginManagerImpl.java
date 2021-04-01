@@ -266,14 +266,13 @@ public class PluginManagerImpl implements PluginManager {
                     public void run() {
                         try {
                             initOnePlugin(plugin);
-                        } catch (PluginException e) {
+                            successCounter.incrementAndGet();
+                        } catch (Exception e) {
                             logger.error("init plugin error, name: {}", plugin.name(), e);
                         } finally {
                             latch.countDown();
                         }
-                        successCounter.incrementAndGet();
                     }
-
                 }, "oneagent plugin " + plugin.name() + " init");
                 thread.start();
             }
@@ -332,14 +331,13 @@ public class PluginManagerImpl implements PluginManager {
                     public void run() {
                         try {
                             startOnePlugin(plugin);
+                            successCounter.incrementAndGet();
                         } catch (PluginException e) {
                             logger.error("start plugin error, name: {}", plugin.name(), e);
                         } finally {
                             latch.countDown();
                         }
-                        successCounter.incrementAndGet();
                     }
-
                 }, "oneagent plugin " + plugin.name() + " start");
                 thread.start();
             }
