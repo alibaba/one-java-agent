@@ -218,7 +218,7 @@ public class PluginManagerImpl implements PluginManager {
         for (Plugin plugin : plugins) {
             try {
                 plugin.enabled();
-            } catch (PluginException e) {
+            } catch (Throwable e) {
                 logger.error("enabled plugin {} error.", plugin.name(), e);
             }
         }
@@ -267,7 +267,7 @@ public class PluginManagerImpl implements PluginManager {
                         try {
                             initOnePlugin(plugin);
                             successCounter.incrementAndGet();
-                        } catch (Exception e) {
+                        } catch (Throwable e) {
                             logger.error("init plugin error, name: {}", plugin.name(), e);
                         } finally {
                             latch.countDown();
@@ -332,7 +332,7 @@ public class PluginManagerImpl implements PluginManager {
                         try {
                             startOnePlugin(plugin);
                             successCounter.incrementAndGet();
-                        } catch (PluginException e) {
+                        } catch (Throwable e) {
                             logger.error("start plugin error, name: {}", plugin.name(), e);
                         } finally {
                             latch.countDown();
