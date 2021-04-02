@@ -36,12 +36,23 @@ import com.alibaba.oneagent.utils.FeatureCodec;
 import com.alibaba.oneagent.utils.IOUtils;
 import com.alibaba.oneagent.utils.InstrumentationUtils;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.ConsoleAppender;
+
 /**
  * 
  * @author hengyunabc 2020-11-12
  *
  */
 public class AgentImpl implements Agent {
+    /**
+     * print more log to stdout
+     */
+    private static final String ONEAGENT_VERBOSE = "oneagent.verbose";
+
     private static final String ONEAGENT_HOME = "oneagent.home";
     public static final String ONEAGENT_EXTPLUGINS = "oneagent.extPlugins";
     public static final String ONEAGENT_ENHANCELOADERS = "oneagent.enhanceLoaders";
@@ -60,9 +71,9 @@ public class AgentImpl implements Agent {
     public void init(String args, final Instrumentation inst, boolean premain) {
         this.instrumentation = inst;
         args = decodeArg(args);
-        initLogger();
-
         Map<String, String> map = FeatureCodec.DEFAULT_COMMANDLINE_CODEC.toMap(args);
+
+        initLogger(map);
 
         String oneagentHome = map.get(ONEAGENT_HOME);
 
@@ -168,7 +179,7 @@ public class AgentImpl implements Agent {
 
             pluginManager.startPlugins();
 
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.error("PluginManager error", e);
         }
         long currentTime = System.nanoTime();
@@ -190,8 +201,31 @@ public class AgentImpl implements Agent {
         }
     }
 
-    private void initLogger() {
+    private void initLogger(Map<String, String> argsMap) {
+        String verboseStr = argsMap.get(ONEAGENT_VERBOSE);
+        if (verboseStr == null) {
+            verboseStr = System.getProperty(ONEAGENT_VERBOSE);
+        }
+        boolean verbose = Boolean.parseBoolean(verboseStr);
+
         logger = LoggerFactory.getLogger(AgentImpl.class);
+
+        if (verbose) {
+            LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+            ch.qos.logback.classic.Logger logbackLogger = (ch.qos.logback.classic.Logger) LoggerFactory
+                    .getLogger(Logger.ROOT_LOGGER_NAME);
+            logbackLogger.setLevel(Level.TRACE);
+
+            ConsoleAppender<ILoggingEvent> appender = new ConsoleAppender<ILoggingEvent>();
+            PatternLayoutEncoder encoder = new PatternLayoutEncoder();
+            encoder.setPattern("%date %level [%thread] %logger{10} [%file:%line] %msg%n");
+            encoder.setContext(loggerContext);
+            appender.setEncoder(encoder);
+            appender.setContext(loggerContext);
+            encoder.start();
+            appender.start();
+            logbackLogger.addAppender(appender);
+        }
     }
 
     void enhanceClassLoader(String enhanceLoaders) throws IOException, UnmodifiableClassException {

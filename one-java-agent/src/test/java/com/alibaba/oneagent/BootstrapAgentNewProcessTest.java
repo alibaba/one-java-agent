@@ -95,6 +95,7 @@ public class BootstrapAgentNewProcessTest {
         Properties properties = new Properties();
         properties.setProperty("oneagent.plugin." + "demo-plugin.enabled", "" + false);
         properties.setProperty("oneagent.plugin." + "demo-agent.enabled", "" + false);
+        properties.setProperty("oneagent.verbose", "" + true);
 
         String processOutput = runProcess(properties);
         System.err.println(processOutput);
