@@ -172,7 +172,7 @@ public class AgentImpl implements Agent {
             logger.error("PluginManager error", e);
         }
         long currentTime = System.nanoTime();
-        logger.info("plugin init completed! cost {}ms", (currentTime - NopAgent.startTime) / (1000 * 1000));
+        logger.info("plugins init completed! cost {}ms", (currentTime - NopAgent.startTime) / (1000 * 1000));
     }
 
     @Override
