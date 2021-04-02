@@ -10,11 +10,13 @@ import com.alibaba.oneagent.plugin.PluginManager;
 import com.alibaba.oneagent.service.ComponentManager;
 
 /**
- * 
+ *
  * @author hengyunabc 2020-11-12
  *
  */
 public class NopAgent implements Agent {
+
+    static final long startTime = System.nanoTime();
 
     static final NopAgent INSTANCE = new NopAgent();
 
