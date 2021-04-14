@@ -137,16 +137,16 @@ public class AgentImpl implements Agent {
 
         AgentSpyImpl.initAgentSpy(componentManager);
 
-        String enhanceLoaders = map.get(ONEAGENT_ENHANCELOADERS);
-        if (enhanceLoaders == null) {
-            enhanceLoaders = ClassLoader.class.getName();
-        }
-
-        try {
-            this.enhanceClassLoader(enhanceLoaders);
-        } catch (Exception e) {
-            logger.error("enhanceLoaders error", e);
-        }
+//        String enhanceLoaders = map.get(ONEAGENT_ENHANCELOADERS);
+//        if (enhanceLoaders == null) {
+//            enhanceLoaders = ClassLoader.class.getName();
+//        }
+//
+//        try {
+//            this.enhanceClassLoader(enhanceLoaders);
+//        } catch (Exception e) {
+//            logger.error("enhanceLoaders error", e);
+//        }
 
         Properties properties = new Properties();
         properties.putAll(map);
