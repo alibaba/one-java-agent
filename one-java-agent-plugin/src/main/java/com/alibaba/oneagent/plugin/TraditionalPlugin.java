@@ -29,7 +29,7 @@ public class TraditionalPlugin implements Plugin {
     private URL location;
 
     private ClassLoader parentClassLoader;
-    private PlguinClassLoader classLoader;
+    private PluginClassLoader classLoader;
 
     private volatile PluginState state;
 
@@ -61,7 +61,7 @@ public class TraditionalPlugin implements Plugin {
 
     @Override
     public boolean enabled() throws PluginException {
-        if (this.pluginConfig.isEnabled() == false) {
+        if (!this.pluginConfig.isEnabled()) {
             return false;
         }
         this.state = PluginState.ENABLED;
@@ -98,7 +98,7 @@ public class TraditionalPlugin implements Plugin {
                 this.instrumentation.appendToSystemClassLoaderSearch(new JarFile(agentJarFile));
                 this.parentClassLoader = ClassLoader.getSystemClassLoader();
             } else {
-                this.parentClassLoader = new PlguinClassLoader(new URL[] { agentJarFile.toURI().toURL() },
+                this.parentClassLoader = new PluginClassLoader(new URL[] { agentJarFile.toURI().toURL() },
                         this.getClass().getClassLoader());
             }
 

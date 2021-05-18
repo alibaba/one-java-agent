@@ -3,23 +3,55 @@ package com.alibaba.oneagent.plugin.config;
 import com.alibaba.oneagent.env.PropertyResolver;
 
 /**
- * 
  * @author hengyunabc 2021-02-19
- *
  */
 public interface PluginConfig extends PropertyResolver {
+    /**
+     * check if plugin config is ready to start
+     *
+     * @return
+     */
+    boolean isEnabled();
 
-    public boolean isEnabled();
+    /**
+     * get plugin config version
+     *
+     * @return
+     */
+    String getVersion();
 
-    public String getVersion();
+    /**
+     * get plugin config name
+     *
+     * @return
+     */
+    String getName();
 
-    public String getName();
+    /**
+     * get plugin config start order
+     *
+     * @return
+     */
+    int getOrder();
 
-    public int getOrder();
+    /**
+     * get start plugin activator class name  插件激活类的名称
+     *
+     * @return
+     */
+    String getPluginActivator();
 
-    public String getPluginActivator();
+    /**
+     * get plugin lib class path
+     *
+     * @return
+     */
+    String getClasspath();
 
-    public String getClasspath();
-
-    public String getSpecification();
+    /**
+     * get plugin 插件规范版本
+     *
+     * @return
+     */
+    String getSpecification();
 }

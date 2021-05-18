@@ -8,9 +8,11 @@ import java.net.URLClassLoader;
  * @author hengyunabc 2019-02-27
  *
  */
-public class PlguinClassLoader extends URLClassLoader {
+public class PluginClassLoader extends URLClassLoader {
+
     private static LockProvider LOCK_PROVIDER = setupLockProvider();
-    public PlguinClassLoader(URL[] urls, ClassLoader parent) {
+
+    public PluginClassLoader(URL[] urls, ClassLoader parent) {
         super(urls, parent);
     }
 
@@ -55,7 +57,7 @@ public class PlguinClassLoader extends URLClassLoader {
      */
     private static class LockProvider {
 
-        public Object getLock(PlguinClassLoader classLoader, String className) {
+        public Object getLock(PluginClassLoader classLoader, String className) {
             return classLoader;
         }
 
@@ -67,7 +69,7 @@ public class PlguinClassLoader extends URLClassLoader {
     private static class Java7LockProvider extends LockProvider {
 
         @Override
-        public Object getLock(PlguinClassLoader classLoader, String className) {
+        public Object getLock(PluginClassLoader classLoader, String className) {
             return classLoader.getClassLoadingLock(className);
         }
 

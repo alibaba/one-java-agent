@@ -1,19 +1,5 @@
 package com.alibaba.oneagent.plugin;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.instrument.Instrumentation;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.alibaba.bytekit.asm.instrument.InstrumentConfig;
 import com.alibaba.bytekit.asm.instrument.InstrumentParseResult;
 import com.alibaba.bytekit.asm.instrument.InstrumentTemplate;
@@ -23,11 +9,18 @@ import com.alibaba.oneagent.service.ComponentManager;
 import com.alibaba.oneagent.service.TransformerManager;
 import com.alibaba.oneagent.utils.IOUtils;
 import com.alibaba.oneagent.utils.PropertiesUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.instrument.Instrumentation;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 
 /**
- *
  * @author hengyunabc 2019-02-28
- *
  */
 public class OneAgentPlugin implements Plugin {
     private static final Logger logger = LoggerFactory.getLogger(OneAgentPlugin.class);
@@ -37,7 +30,8 @@ public class OneAgentPlugin implements Plugin {
     private URL location;
 
     private ClassLoader parentClassLoader;
-    private PlguinClassLoader classLoader;
+
+    private PluginClassLoader classLoader;
 
     private PluginConfigImpl pluginConfig;
 
@@ -50,13 +44,13 @@ public class OneAgentPlugin implements Plugin {
     private ComponentManager componentManager;
 
     public OneAgentPlugin(URL location, Instrumentation instrumentation, ComponentManager componentManager,
-            ClassLoader parentClassLoader, Properties gobalProperties) throws PluginException {
+                          ClassLoader parentClassLoader, Properties gobalProperties) throws PluginException {
         this(location, Collections.<URL>emptySet(), instrumentation, componentManager, parentClassLoader,
                 gobalProperties);
     }
 
     public OneAgentPlugin(URL location, Set<URL> extraURLs, Instrumentation instrumentation,
-            ComponentManager componentManager, ClassLoader parentClassLoader, Properties gobalProperties)
+                          ComponentManager componentManager, ClassLoader parentClassLoader, Properties gobalProperties)
             throws PluginException {
 
         this.location = location;
@@ -79,14 +73,14 @@ public class OneAgentPlugin implements Plugin {
 
         urls.addAll(scanPluginUrls(classpath));
 
-        classLoader = new PlguinClassLoader(urls.toArray(new URL[0]), parentClassLoader);
+        classLoader = new PluginClassLoader(urls.toArray(new URL[0]), parentClassLoader);
 
         this.pluginContext = new PluginContextImpl(this, instrumentation, componentManager, properties);
     }
 
     @Override
     public boolean enabled() throws PluginException {
-        if (this.pluginConfig.isEnabled() == false) {
+        if (!this.pluginConfig.isEnabled()) {
             return false;
         }
         //检查全局配置
@@ -184,6 +178,7 @@ public class OneAgentPlugin implements Plugin {
         return this.state;
     }
 
+    @Override
     public void setState(PluginState state) {
         this.state = state;
     }

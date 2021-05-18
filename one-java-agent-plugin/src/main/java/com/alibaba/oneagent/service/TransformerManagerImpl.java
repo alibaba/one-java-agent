@@ -17,13 +17,13 @@ public class TransformerManagerImpl implements TransformerManager, Component {
 	private ClassFileTransformer classFileTransformer;
 	private ClassFileTransformer reClassFileTransformer;
 
-	private volatile List<ClassFileTransformerWraper> transformers = new ArrayList<ClassFileTransformerWraper>();
-	private volatile List<ClassFileTransformerWraper> reTransformers = new ArrayList<ClassFileTransformerWraper>();
+	private volatile List<ClassFileTransformerWrapper> transformers = new ArrayList<ClassFileTransformerWrapper>();
+	private volatile List<ClassFileTransformerWrapper> reTransformers = new ArrayList<ClassFileTransformerWrapper>();
 
-	private static Comparator<ClassFileTransformerWraper> comparator = new Comparator<ClassFileTransformerWraper>() {
+	private static Comparator<ClassFileTransformerWrapper> comparator = new Comparator<ClassFileTransformerWrapper>() {
 
 		@Override
-		public int compare(ClassFileTransformerWraper o1, ClassFileTransformerWraper o2) {
+		public int compare(ClassFileTransformerWrapper o1, ClassFileTransformerWrapper o2) {
 			return o1.order - o2.order;
 		}
 
@@ -36,7 +36,7 @@ public class TransformerManagerImpl implements TransformerManager, Component {
 
 	@Override
 	synchronized public void addTransformer(ClassFileTransformer transformer, int order) {
-		transformers.add(new ClassFileTransformerWraper(transformer, order));
+		transformers.add(new ClassFileTransformerWrapper(transformer, order));
 		Collections.sort(transformers, comparator);
 
 	}
@@ -49,7 +49,7 @@ public class TransformerManagerImpl implements TransformerManager, Component {
 	@Override
 	synchronized public void addTransformer(ClassFileTransformer transformer, boolean canRetransform, int order) {
 		if (canRetransform) {
-			reTransformers.add(new ClassFileTransformerWraper(transformer, order));
+			reTransformers.add(new ClassFileTransformerWrapper(transformer, order));
 			Collections.sort(reTransformers, comparator);
 		} else {
 			this.addTransformer(transformer, order);
@@ -58,16 +58,16 @@ public class TransformerManagerImpl implements TransformerManager, Component {
 
 	@Override
 	synchronized public void removeTransformer(ClassFileTransformer transformer) {
-		for (ClassFileTransformerWraper wraper : this.transformers) {
-			if (wraper.classFileTransformer.equals(transformer)) {
-				this.transformers.remove(wraper);
+		for (ClassFileTransformerWrapper wrapper : this.transformers) {
+			if (wrapper.classFileTransformer.equals(transformer)) {
+				this.transformers.remove(wrapper);
 				break;
 			}
 		}
 
-		for (ClassFileTransformerWraper wraper : this.reTransformers) {
-			if (wraper.classFileTransformer.equals(transformer)) {
-				this.reTransformers.remove(wraper);
+		for (ClassFileTransformerWrapper wrapper : this.reTransformers) {
+			if (wrapper.classFileTransformer.equals(transformer)) {
+				this.reTransformers.remove(wrapper);
 				break;
 			}
 		}
@@ -78,11 +78,11 @@ public class TransformerManagerImpl implements TransformerManager, Component {
 		ArrayList<ClassFileTransformer> result = new ArrayList<ClassFileTransformer>();
 
 		if (canRetransform) {
-			for (ClassFileTransformerWraper wraper : this.reTransformers) {
-				result.add(wraper.classFileTransformer);
+			for (ClassFileTransformerWrapper wrapper : this.reTransformers) {
+				result.add(wrapper.classFileTransformer);
 			}
 		} else {
-			for (ClassFileTransformerWraper wraper : this.transformers) {
+			for (ClassFileTransformerWrapper wraper : this.transformers) {
 				result.add(wraper.classFileTransformer);
 			}
 		}
@@ -90,15 +90,15 @@ public class TransformerManagerImpl implements TransformerManager, Component {
 		return result;
 	}
 
-	static class ClassFileTransformerWraper {
+	static class ClassFileTransformerWrapper {
 		ClassFileTransformer classFileTransformer;
 		int order = TransformerManager.DEFAULT_ORDER;
 
-		public ClassFileTransformerWraper(ClassFileTransformer classFileTransformer) {
+		public ClassFileTransformerWrapper(ClassFileTransformer classFileTransformer) {
 			this(classFileTransformer, TransformerManager.DEFAULT_ORDER);
 		}
 
-		public ClassFileTransformerWraper(ClassFileTransformer classFileTransformer, int order) {
+		public ClassFileTransformerWrapper(ClassFileTransformer classFileTransformer, int order) {
 			this.classFileTransformer = classFileTransformer;
 			this.order = order;
 		}

@@ -1,27 +1,42 @@
 package com.alibaba.oneagent.plugin;
 
+/**
+ * @author hengyunabc 2019-03-01
+ */
 public interface PluginActivator {
 
-    // 让插件本身判断是否要启动
+    /**
+     * 让插件本身判断是否要启动
+     *
+     * @param context
+     * @return
+     */
     boolean enabled(PluginContext context);
 
-    public void init(PluginContext context) throws Exception;
+    /**
+     * calling this method ,the {@link PluginState} is {@link PluginState#INITED}
+     * {@linkplain PluginManager#initPlugins()}
+     *
+     * @param context
+     * @throws Exception
+     */
+    void init(PluginContext context) throws Exception;
 
     /**
      * Before calling this method, the {@link PluginState} is
      * {@link PluginState#STARTING}, after calling, the {@link PluginState} is
-     * {@link PluginState#ACTIVE}
+     * {@link PluginState#STARTED}
      *
      * @param context
      */
-    public void start(PluginContext context) throws Exception;
+    void start(PluginContext context) throws Exception;
 
     /**
      * Before calling this method, the {@link PluginState} is
      * {@link PluginState#STOPPING}, after calling, the {@link PluginState} is
-     * {@link PluginState#RESOLVED}
+     * {@link PluginState#STOPED}
      *
      * @param context
      */
-    public void stop(PluginContext context) throws Exception;
+    void stop(PluginContext context) throws Exception;
 }
