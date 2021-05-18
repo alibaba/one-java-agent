@@ -59,6 +59,7 @@ public class PluginManagerImpl implements PluginManager {
     }
 
     // 可能会执行多次
+    @Override
     synchronized public void scanPlugins() throws PluginException {
 
         // 通过外部参数，可以只启动指定的插件

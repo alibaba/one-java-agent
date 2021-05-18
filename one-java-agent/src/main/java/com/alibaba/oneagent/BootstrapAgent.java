@@ -23,8 +23,8 @@ public class BootstrapAgent {
         main(args, inst, false);
     }
 
-    public static void destory() {
-        AGENT.destory();
+    public static void destroy() {
+        AGENT.destroy();
     }
 
     private static synchronized void main(String args, Instrumentation inst, boolean premain) {
