@@ -1,37 +1,33 @@
 package com.alibaba.oneagent.plugin.config;
 
-import java.util.Map.Entry;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Properties;
-
 import com.alibaba.oneagent.env.MutablePropertySources;
 import com.alibaba.oneagent.env.PropertiesPropertySource;
 import com.alibaba.oneagent.env.PropertySourcesPropertyResolver;
 import com.alibaba.oneagent.plugin.OneAgentPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Map.Entry;
+import java.util.Properties;
 
 /**
- * 
  * @author hengyunabc 2021-02-19
- *
  */
 public class PluginConfigImpl extends AbstractPluginConfig {
     private static final Logger logger = LoggerFactory.getLogger(PluginConfigImpl.class);
     /**
      * 从system properties里抽取出插件自身的配置
      */
-    public static final String FROM_SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME = "fromSystemProperties";
+    private static final String FROM_SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME = "fromSystemProperties";
     /**
      * 从oneagent本身的全局配置 properties里抽取出插件自身的配置
      */
-    public static final String FROM_GLOBAL_PROPERTIES_PROPERTY_SOURCE_NAME = "fromGlobalProperties";
+    private static final String FROM_GLOBAL_PROPERTIES_PROPERTY_SOURCE_NAME = "fromGlobalProperties";
 
     /**
      * plugin.properties里的配置
      */
-    public static final String PLUGIN_PROPERTIES_PROPERTY_SOURCE_NAME = "pluginlProperties";
+    private static final String PLUGIN_PROPERTIES_PROPERTY_SOURCE_NAME = "pluginProperties";
 
     public static final String PLUGIN_CONFIG_PREFIX = "oneagent.plugin.";
 
@@ -42,6 +38,9 @@ public class PluginConfigImpl extends AbstractPluginConfig {
 
     private final MutablePropertySources propertySources = new MutablePropertySources();
 
+    /**
+     * default is true
+     */
     private boolean enabled = true;
     /**
      * 插件规范版本
@@ -49,13 +48,21 @@ public class PluginConfigImpl extends AbstractPluginConfig {
     private String specification;
 
     private String version;
+
     private String name;
+
+    /**
+     * Plugin Activator Class Name  插件激活类的名称
+     */
     private String pluginActivator;
     /**
      * 多个之间用 : 分隔，不配置则默认值为 lib。路径是plugin location的相对位置
      */
     private String classpath = "lib";
 
+    /**
+     * default is {@linkplain OneAgentPlugin.DEFAULT_ORDER}
+     */
     private int order = OneAgentPlugin.DEFAULT_ORDER;
 
     public PluginConfigImpl(Properties globalProperties, Properties pluginProperties) {
@@ -75,17 +82,10 @@ public class PluginConfigImpl extends AbstractPluginConfig {
 
         version = this.propertyResolver.getProperty("version");
         pluginActivator = this.propertyResolver.getProperty("pluginActivator");
-        classpath = this.propertyResolver.getProperty("classpath");
+        classpath = this.propertyResolver.getProperty("classpath", "lib");
         specification = this.propertyResolver.getProperty("specification");
-        Integer configOrder = this.propertyResolver.getProperty("order", Integer.class);
-        if (configOrder != null) {
-            this.order = configOrder;
-        }
-
-        Boolean configEnabled = this.propertyResolver.getProperty("enabled", Boolean.class);
-        if (configEnabled != null) {
-            this.enabled = configEnabled;
-        }
+        this.order = this.propertyResolver.getProperty("order", Integer.class, OneAgentPlugin.DEFAULT_ORDER);
+        this.enabled = this.propertyResolver.getProperty("enabled", Boolean.class, Boolean.TRUE);
     }
 
     private Properties extractPluginProperties(Properties properties) {
