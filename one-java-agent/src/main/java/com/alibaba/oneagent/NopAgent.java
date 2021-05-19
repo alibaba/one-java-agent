@@ -114,7 +114,7 @@ public class NopAgent implements Agent {
     };
 
     @Override
-    public PluginManager pluginMaanger() {
+    public PluginManager pluginManager() {
         return PLUGIN_MANAGER;
     }
 
@@ -124,7 +124,7 @@ public class NopAgent implements Agent {
     }
 
     @Override
-    public void destory() {
+    public void destroy() {
 
     }
 

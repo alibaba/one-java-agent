@@ -12,12 +12,30 @@ import com.alibaba.oneagent.service.ComponentManager;
  */
 public interface Agent {
 
-    public void init(final String args, final Instrumentation inst, boolean premain);
+    /**
+     * init agent
+     *
+     * @param args
+     * @param inst
+     * @param premain
+     */
+    void init(final String args, final Instrumentation inst, boolean premain);
 
-    public void destory();
+    /**
+     * destroy agent
+     */
+    void destroy();
 
-    public PluginManager pluginMaanger();
+    /**
+     * get PluginManager
+     * @return
+     */
+    PluginManager pluginManager();
 
-    public ComponentManager componentManager();
+    /**
+     * get ComponentManager
+     * @return
+     */
+    ComponentManager componentManager();
 
 }

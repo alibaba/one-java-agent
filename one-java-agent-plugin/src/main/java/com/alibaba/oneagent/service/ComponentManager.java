@@ -1,18 +1,32 @@
 package com.alibaba.oneagent.service;
 
 /**
- * 
  * @author hengyunabc 2020-12-17
- *
  */
 public interface ComponentManager {
 
-    public <T> T getComponent(Class<T> clazz);
+    /**
+     * get the specified  class type of component，result may be null
+     *
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    <T> T getComponent(Class<T> clazz);
 
-    public void initComponents();
+    /**
+     * init all component from spi services
+     */
+    void initComponents();
 
-    public void startComponents();
+    /**
+     * start all component
+     */
+    void startComponents();
 
-    public void stopComponents();
+    /**
+     * stop component
+     */
+    void stopComponents();
 
 }

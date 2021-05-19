@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 
 import org.junit.Rule;
-import org.junit.Test;
 import org.springframework.boot.test.rule.OutputCapture;
 
 import net.bytebuddy.agent.ByteBuddyAgent;
@@ -28,7 +27,7 @@ public class BootstrapAgentTest {
         System.err.println("args: " + args);
         BootstrapAgent.agentmain(args, instrumentation);
 
-        BootstrapAgent.destory();
+        BootstrapAgent.destroy();
 
         assertThat(capture.toString()).contains("enabled TestActivator").contains("init TestActivator")
                 .contains("start TestActivator").contains("start DubboDemoActivator").contains("DemoAgent started.")

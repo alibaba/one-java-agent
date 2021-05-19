@@ -40,9 +40,9 @@ public class PluginManagerImpl implements PluginManager {
 
     private Properties properties;
 
-    private List<URL> scanPluginlLoacations = new ArrayList<URL>();
+    private List<URL> scanPluginLocations = new ArrayList<URL>();
 
-    private List<URL> extPluginlLoacations = new ArrayList<URL>();
+    private List<URL> extPluginLocations = new ArrayList<URL>();
 
     public PluginManagerImpl(Instrumentation instrumentation, ComponentManager componentManager, Properties properties,
             URL scanPluginLocation) {
@@ -50,15 +50,16 @@ public class PluginManagerImpl implements PluginManager {
     }
 
     public PluginManagerImpl(Instrumentation instrumentation, ComponentManager componentManager, Properties properties,
-            URL scanPluginLocation, List<URL> extPluginlLoacations) {
+            URL scanPluginLocation, List<URL> extPluginLocations) {
         this.instrumentation = instrumentation;
         this.componentManager = componentManager;
         this.properties = properties;
-        this.scanPluginlLoacations.add(scanPluginLocation);
-        this.extPluginlLoacations = extPluginlLoacations;
+        this.scanPluginLocations.add(scanPluginLocation);
+        this.extPluginLocations = extPluginLocations;
     }
 
     // 可能会执行多次
+    @Override
     synchronized public void scanPlugins() throws PluginException {
 
         // 通过外部参数，可以只启动指定的插件
@@ -74,7 +75,7 @@ public class PluginManagerImpl implements PluginManager {
             }
         }
         try {
-            for (URL scanLocation : scanPluginlLoacations) {
+            for (URL scanLocation : scanPluginLocations) {
                 File dir = new File(scanLocation.getFile());
 
                 File[] files = dir.listFiles();
@@ -93,7 +94,7 @@ public class PluginManagerImpl implements PluginManager {
             }
 
             // 加载 ext 指定的插件
-            for (URL pluginLocation : this.extPluginlLoacations) {
+            for (URL pluginLocation : this.extPluginLocations) {
                 loadPlugin(new File(pluginLocation.getFile()));
             }
         } catch (Throwable e) {

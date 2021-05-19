@@ -47,10 +47,12 @@ public abstract class AbstractPropertyResolver implements ConfigurablePropertyRe
 
     private final Set<String> requiredProperties = new LinkedHashSet<String>();
 
+    @Override
     public ConfigurableConversionService getConversionService() {
         return this.conversionService;
     }
 
+    @Override
     public void setConversionService(ConfigurableConversionService conversionService) {
         this.conversionService = conversionService;
     }

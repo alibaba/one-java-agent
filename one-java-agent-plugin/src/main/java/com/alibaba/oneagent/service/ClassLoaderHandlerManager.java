@@ -1,17 +1,35 @@
 package com.alibaba.oneagent.service;
 
 /**
- * 
  * @author hengyunabc 2020-12-09
- *
  */
 public interface ClassLoaderHandlerManager {
+    /**
+     * add ClassLoaderHandler
+     *
+     * @param handler
+     */
+    void addHandler(ClassLoaderHandler handler);
 
-    public void addHandler(ClassLoaderHandler handler);
+    /**
+     * remove ClassLoaderHandler
+     *
+     * @param handler
+     */
+    void removeHandler(ClassLoaderHandler handler);
 
-    public void removeHandler(ClassLoaderHandler handler);
+    /**
+     * get all ClassLoaderHandler
+     *
+     * @return
+     */
+    ClassLoaderHandler[] handlers();
 
-    public ClassLoaderHandler[] handlers();
-
-    public Class<?> loadClass(String name);
+    /**
+     * load class name in order of ClassLoaderHandler
+     *
+     * @param name
+     * @return
+     */
+    Class<?> loadClass(String name);
 }

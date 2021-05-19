@@ -4,23 +4,56 @@ import java.lang.instrument.ClassFileTransformer;
 import java.util.List;
 
 /**
- * 
  * @author hengyunabc 2020-07-27
- *
  */
 public interface TransformerManager {
 
-	public static int DEFAULT_ORDER = 1000;
+    int DEFAULT_ORDER = 1000;
 
-	public void addTransformer(ClassFileTransformer transformer);
+    /**
+     * add class file  transformer canRetransform is false and order is default
+     *
+     * @param transformer
+     */
+    void addTransformer(ClassFileTransformer transformer);
 
-	public void addTransformer(ClassFileTransformer transformer, boolean canRetransform);
+    /**
+     * add class file  transformer,order is default
+     *
+     * @param transformer
+     * @param canRetransform
+     */
+    void addTransformer(ClassFileTransformer transformer, boolean canRetransform);
 
-	public void addTransformer(ClassFileTransformer transformer, int order);
+    /**
+     * add class file  transformer,canRetransform is false
+     *
+     * @param transformer
+     * @param order
+     */
+    void addTransformer(ClassFileTransformer transformer, int order);
 
-	public void addTransformer(ClassFileTransformer transformer, boolean canRetransform, int order);
+    /**
+     * add class file  transformer
+     *
+     * @param transformer
+     * @param canRetransform
+     * @param order
+     */
+    void addTransformer(ClassFileTransformer transformer, boolean canRetransform, int order);
 
-	public void removeTransformer(ClassFileTransformer transformer);
+    /**
+     * remove  class file  transformer
+     *
+     * @param transformer
+     */
+    void removeTransformer(ClassFileTransformer transformer);
 
-	public List<ClassFileTransformer> classFileTransformer(boolean canRetransform);
+    /**
+     * get all ClassFileTransformers
+     *
+     * @param canRetransform
+     * @return
+     */
+    List<ClassFileTransformer> classFileTransformer(boolean canRetransform);
 }

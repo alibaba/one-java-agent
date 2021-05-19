@@ -43,7 +43,7 @@ public class PluginContextImpl implements PluginContext {
     }
 
     @Override
-    public ComponentManager getcomponentManager() {
+    public ComponentManager getComponentManager() {
         return componentManager;
     }
 
