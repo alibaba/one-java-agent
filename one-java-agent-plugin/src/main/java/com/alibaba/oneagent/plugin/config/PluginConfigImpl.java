@@ -88,6 +88,17 @@ public class PluginConfigImpl extends AbstractPluginConfig {
         this.enabled = this.propertyResolver.getProperty("enabled", Boolean.class, Boolean.TRUE);
     }
 
+    /**
+     * <pre>
+     * 比如插件 aaa ，它可以在全局配置自己的一些属性，并且优先级比 plugin.properties要高。比如在 system properties里配置
+     * oneagent.plugin.aaa.enabled=false
+     * 
+     * 等同于在 plugin.properties 里配置
+     * enabled=false
+     * </pre>
+     * @param properties
+     * @return
+     */
     private Properties extractPluginProperties(Properties properties) {
         String pluginName = this.getName();
 
