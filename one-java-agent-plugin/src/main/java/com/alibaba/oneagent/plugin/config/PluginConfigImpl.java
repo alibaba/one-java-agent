@@ -7,6 +7,8 @@ import com.alibaba.oneagent.plugin.OneAgentPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 
@@ -65,12 +67,15 @@ public class PluginConfigImpl extends AbstractPluginConfig {
      */
     private int order = OneAgentPlugin.DEFAULT_ORDER;
 
+    private List<String> importPackages;
+    private List<String> exportPackages;
+
     public PluginConfigImpl(Properties globalProperties, Properties pluginProperties) {
         this.name = pluginProperties.getProperty("name");
         if (this.name == null) {
             throw new IllegalArgumentException("plugin name can not be null, please check plugin config.");
         }
-        propertyResolver = new PropertySourcesPropertyResolver(this.propertySources);
+        this.propertyResolver = new PropertySourcesPropertyResolver(this.propertySources);
 
         Properties formSystemProperties = extractPluginProperties(System.getProperties());
         Properties fromGlobalProperties = extractPluginProperties(globalProperties);
@@ -86,6 +91,8 @@ public class PluginConfigImpl extends AbstractPluginConfig {
         specification = this.propertyResolver.getProperty("specification");
         this.order = this.propertyResolver.getProperty("order", Integer.class, OneAgentPlugin.DEFAULT_ORDER);
         this.enabled = this.propertyResolver.getProperty("enabled", Boolean.class, Boolean.TRUE);
+        this.importPackages = Arrays.asList(this.propertyResolver.getProperty("importPackages", String[].class, new String[0]));
+        this.exportPackages = Arrays.asList(this.propertyResolver.getProperty("exportPackages", String[].class, new String[0]));
     }
 
     /**
@@ -165,6 +172,16 @@ public class PluginConfigImpl extends AbstractPluginConfig {
     @Override
     public boolean isEnabled() {
         return enabled;
+    }
+
+    @Override
+    public List<String> exportPackages() {
+        return exportPackages;
+    }
+
+    @Override
+    public List<String> importPackages() {
+        return importPackages;
     }
 
 }

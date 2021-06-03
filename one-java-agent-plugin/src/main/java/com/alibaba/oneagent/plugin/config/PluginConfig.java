@@ -1,5 +1,7 @@
 package com.alibaba.oneagent.plugin.config;
 
+import java.util.List;
+
 import com.alibaba.oneagent.env.PropertyResolver;
 
 /**
@@ -54,4 +56,8 @@ public interface PluginConfig extends PropertyResolver {
      * @return
      */
     String getSpecification();
+
+    List<String> exportPackages();
+
+    List<String> importPackages();
 }

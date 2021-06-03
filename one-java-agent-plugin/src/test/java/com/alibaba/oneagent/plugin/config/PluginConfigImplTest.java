@@ -19,12 +19,15 @@ public class PluginConfigImplTest {
         Properties pluginProperties = new Properties();
         pluginProperties.put("name", "test");
         pluginProperties.put("enabled", "false");
+        pluginProperties.put("exportPackages", "  com.test\t, hello, abc.xyz ");
 
         PluginConfigImpl impl = new PluginConfigImpl(globalProperties, pluginProperties);
 
         boolean enabled = impl.isEnabled();
 
         Assertions.assertThat(enabled).isFalse();
+        Assertions.assertThat(impl.exportPackages()).containsExactly("com.test", "hello", "abc.xyz");
+        Assertions.assertThat(impl.importPackages()).isEmpty();
     }
 
     @Test
