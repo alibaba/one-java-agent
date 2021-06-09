@@ -44,6 +44,8 @@
         <module>one-java-agent-spy</module>
         <module>one-java-agent-plugin</module>
         <module>demo-plugin</module>
+        <module>fastjson-demo-plugin</module>
+        <module>bytekit-demo-plugin</module>
         <module>dubbo-test-instrument</module>
         <module>dubbo-test-plugin</module>
         <module>one-java-agent</module>
