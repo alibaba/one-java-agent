@@ -1,5 +1,19 @@
 package com.alibaba.oneagent.plugin;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.instrument.Instrumentation;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.alibaba.bytekit.asm.instrument.InstrumentConfig;
 import com.alibaba.bytekit.asm.instrument.InstrumentParseResult;
 import com.alibaba.bytekit.asm.instrument.InstrumentTemplate;
@@ -9,15 +23,7 @@ import com.alibaba.oneagent.service.ComponentManager;
 import com.alibaba.oneagent.service.TransformerManager;
 import com.alibaba.oneagent.utils.IOUtils;
 import com.alibaba.oneagent.utils.PropertiesUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.instrument.Instrumentation;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.*;
+import com.alibaba.oneagent.plugin.share.SharedService;
 
 /**
  * @author hengyunabc 2019-02-28
@@ -73,7 +79,8 @@ public class OneAgentPlugin implements Plugin {
 
         urls.addAll(scanPluginUrls(classpath));
 
-        classLoader = new PluginClassLoader(urls.toArray(new URL[0]), parentClassLoader);
+        SharedService sharedService = this.componentManager.getComponent(SharedService.class);
+        classLoader = new PluginClassLoader(urls.toArray(new URL[0]), parentClassLoader, sharedService, pluginConfig);
 
         this.pluginContext = new PluginContextImpl(this, instrumentation, componentManager, properties);
     }
@@ -164,6 +171,10 @@ public class OneAgentPlugin implements Plugin {
 
     public void uninstall() {
         // close classloader, 清理资源
+        SharedService sharedService = componentManager.getComponent(SharedService.class);
+        if(sharedService != null) {
+            sharedService.unRegisterClassLoader(classLoader);
+        }
         IOUtils.close(this.classLoader);
         this.classLoader = null;
     }
@@ -203,6 +214,11 @@ public class OneAgentPlugin implements Plugin {
             for (String path : strings) {
                 if (path.endsWith(".jar")) {
                     File file = new File(pluginDir, path);
+                    // check file
+                    if (!file.exists()) {
+                        logger.error("scan plugin urls error! file do not exist: {}", file);
+                        throw new PluginException("scan error, file do not exist: " + file.getAbsolutePath());
+                    }
                     urls.add(file.toURI().toURL());
                 } else {
                     urls.addAll(scanDir(path));

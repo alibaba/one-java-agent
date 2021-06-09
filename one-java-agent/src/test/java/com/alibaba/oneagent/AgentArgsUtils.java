@@ -25,6 +25,8 @@ public class AgentArgsUtils {
 
         String version = readVersion(new File(file, "../../pom.xml"));
 
+        File fastjsonDemoPluginDir = new File(file, "../../../fastjson-demo-plugin/target/fastjson-demo-plugin@" + version);
+        File bytekitDemoPluginDir = new File(file, "../../../bytekit-demo-plugin/target/bytekit-demo-plugin@" + version);
         File demoPluginDir = new File(file, "../../../demo-plugin/target/demo-plugin@" + version);
 
         File demoAgentDir = new File(file, "../../../demo-agent/target/demo-agent@" + version);
@@ -33,8 +35,10 @@ public class AgentArgsUtils {
 
         Map<String, String> map = new HashMap<String, String>();
 
-        map.put(AgentImpl.ONEAGENT_EXT_PLUGINS, demoPluginDir.getAbsolutePath() + "," + demoAgentDir.getAbsolutePath()
-                + "," + dubboDemoPluginDir.getAbsolutePath());
+        map.put(AgentImpl.ONEAGENT_EXT_PLUGINS, fastjsonDemoPluginDir.getCanonicalPath() + "," + 
+                bytekitDemoPluginDir.getCanonicalPath() + "," + 
+                demoPluginDir.getCanonicalPath() + "," + demoAgentDir.getCanonicalPath()
+                + "," + dubboDemoPluginDir.getCanonicalPath());
 
         String args = FeatureCodec.DEFAULT_COMMANDLINE_CODEC.toString(map);
 

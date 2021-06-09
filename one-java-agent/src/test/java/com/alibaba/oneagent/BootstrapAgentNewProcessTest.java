@@ -43,10 +43,10 @@ public class BootstrapAgentNewProcessTest {
 
         // java -javaagent:xxx.jar[=option] -cp [test-classes] TTT
 
-        String agentStr = "-javaagent:" + oneagentJarFile.getAbsolutePath() + "=" + args;
+        String agentStr = "-javaagent:" + oneagentJarFile.getCanonicalPath() + "=" + args;
 
         List<String> commands = new ArrayList<String>();
-        commands.add(javaPath.getAbsolutePath());
+        commands.add(javaPath.getCanonicalPath());
         commands.add(agentStr);
         commands.add("-cp");
         commands.add(testClassesDir);
@@ -87,6 +87,12 @@ public class BootstrapAgentNewProcessTest {
                 .contains("start " + className).contains(TTT.STR);
 
         Assertions.assertThat(processOutput).contains("DemoAgent started.");
+
+        // 测试加载 bytekit-demo-plugin 里的类
+        Assertions.assertThat(processOutput).contains("bytekit-demo-plugin/target/bytekit-demo-plugin");
+
+        // 测试加载 fastjson-demo-plugin 里的类
+        Assertions.assertThat(processOutput).contains("DemoActivator: {\"name\":\"DemoActivator\"}");
     }
 
     @Test
