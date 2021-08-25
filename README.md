@@ -60,6 +60,66 @@ agentJarPath=demo-agent.jar
 
 则 one java agent会启动这个`demo-agent`。
 
+## 配置注入
+
+One Java Agent很方便可以注入配置到插件里。
+
+1. 配置到插件的`plugin.properties`文件里
+2. 通过`-D`参数配置，比如插件`aaa`，则可以配置为`-Doneagent.plugin.aaa.key1=value1`
+
+然后可以通过`PluginContext#getProperty("key1")`来获取值。
+
+## 迁移
+
+* 从一个传统的Java Agent如何迁移到one java agent的形式？
+* 如何同时支持传统的 `-javaagent` 方式和 one java agent形式？
+
+比如一个传统的Agent，它会有一个包含 premain 函数的类：
+
+```java
+public class MyAgent {
+
+    public static void premain(String args, Instrumentation inst) {
+        // do something
+        // init
+    }
+}
+```
+
+把上面的Agent做同时支持非常简单，先把原来的初始化逻辑抽取为`init`函数，把原来的初始化逻辑移到里面：
+
+```java
+public class MyAgent {
+
+    public static void premain(String args, Instrumentation inst) {
+        init();
+    }
+
+    public static void init(String args, Instrumentation inst) {
+        // do something
+        // init
+    }
+}
+```
+
+然后按上面的文档，编写一个`MyActivator`，在`init`函数里调用原来的`MyAgent.init(args, instrumentation);`函数
+
+```java
+public class MyActivator implements PluginActivator {
+...
+    @Override
+    public void init(PluginContext context) throws Exception {
+        Instrumentation instrumentation = context.getInstrumentation();
+        String args = context.getProperty("args");
+        MyAgent.init(args, instrumentation);
+    }
+...
+}
+```
+
+在MyActivator init函数里，args可以通过`配置注入`一节注入，或者通过自定义的方式来获取。
+
+这样子，Agent就可以同时支持传统方式和One Java Agent方式启动。
 
 ## 编译开发
 
