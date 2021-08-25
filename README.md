@@ -81,7 +81,6 @@ public class MyAgent {
 
     public static void premain(String args, Instrumentation inst) {
         // do something
-        // init
     }
 }
 ```
@@ -97,7 +96,6 @@ public class MyAgent {
 
     public static void init(String args, Instrumentation inst) {
         // do something
-        // init
     }
 }
 ```
