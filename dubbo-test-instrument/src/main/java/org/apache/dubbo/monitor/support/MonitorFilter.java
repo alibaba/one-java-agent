@@ -9,6 +9,7 @@ import org.apache.dubbo.rpc.RpcException;
 
 import com.alibaba.bytekit.agent.inst.Instrument;
 import com.alibaba.bytekit.agent.inst.InstrumentApi;
+import com.test.dubbo.RpcUtils;
 
 /**
  * 
@@ -22,6 +23,7 @@ public abstract class MonitorFilter {
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException  {
         
         try {
+            RpcUtils.print(invoker);
             RpcContext rpcContext = RpcContext.getContext();
             boolean isConsumer = rpcContext.isConsumerSide();
             URL requestURL = invoker.getUrl();

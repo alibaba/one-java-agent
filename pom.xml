@@ -46,6 +46,7 @@
         <module>demo-plugin</module>
         <module>fastjson-demo-plugin</module>
         <module>bytekit-demo-plugin</module>
+        <module>dubbo-test-plugin-common</module>
         <module>dubbo-test-instrument</module>
         <module>dubbo-test-plugin</module>
         <module>one-java-agent</module>

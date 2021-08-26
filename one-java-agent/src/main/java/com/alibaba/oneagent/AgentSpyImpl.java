@@ -20,6 +20,9 @@ public class AgentSpyImpl implements AgentSpy {
 
     @Override
     public Class<?> loadClass(String name) {
+        if (name.startsWith("java.")) {
+            return null;
+        }
         return classLoaderHandlerManager.loadClass(name);
     }
 

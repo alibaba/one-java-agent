@@ -33,6 +33,11 @@
             <scope>provided</scope>
         </dependency>
 
+         <dependency>
+            <groupId>com.alibaba.oneagent</groupId>
+            <artifactId>dubbo-test-plugin-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>dubbo-test-plugin</finalName>
