@@ -119,6 +119,29 @@ public class MyActivator implements PluginActivator {
 
 这样子，Agent就可以同时支持传统方式和One Java Agent方式启动。
 
+
+## 插件之间类共享
+
+参考`fastjson-demo-plugin`，它在`plugin.properties`里配置了`exportPackages=com.alibaba.fastjson`。
+
+当其它插件想引用共享的fastjson时，需要在`plugin.properties`里配置：
+
+```
+importPackages=com.alibaba.fastjson
+```
+
+## 插件注册自定义 ClassLoaderHandler
+
+当插件增强应用ClassLoader里加载的类时，会出现一个问题，当调用插件自己的类时，会加载不到。因此提供一个`ClassLoaderHandler`机制，插件方可以自行注册处理自己package下的类加载。
+
+参考`dubbo-test-plugin`里：
+
+* /dubbo-test-plugin/src/main/java/com/test/dubbo/DubboPluginClassLoaderHandler.java
+* /dubbo-test-instrument/src/main/java/org/apache/dubbo/monitor/support/MonitorFilter.java
+
+在`MonitorFilter`里调用了在 plugin里加载的`com.test.dubbo.RpcUtils`。
+
+
 ## 编译开发
 
 * 本项目依赖 bytekit: https://github.com/alibaba/bytekit ，可能需要先`mvn clean install` bytekit
