@@ -91,7 +91,7 @@ public class MyAgent {
 public class MyAgent {
 
     public static void premain(String args, Instrumentation inst) {
-        init();
+        init(args, inst);
     }
 
     public static void init(String args, Instrumentation inst) {
