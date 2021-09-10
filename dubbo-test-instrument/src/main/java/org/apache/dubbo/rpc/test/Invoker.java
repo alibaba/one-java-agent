@@ -6,6 +6,7 @@ import org.apache.dubbo.rpc.RpcException;
 
 import com.alibaba.bytekit.agent.inst.Instrument;
 import com.alibaba.bytekit.agent.inst.InstrumentApi;
+import com.hello.DubboUtils;
 
 /**
  * @see org.apache.dubbo.rpc.Invoker
@@ -23,6 +24,7 @@ public abstract class Invoker {
      * @throws RpcException
      */
     public Result invoke(Invocation invocation) throws RpcException {
+        DubboUtils.test(invocation);
         System.err.println("invoker class: " + this.getClass().getName());
         Result result = InstrumentApi.invokeOrigin();
         System.err.println("result:" + result + ", invoker class: " + this.getClass().getName());

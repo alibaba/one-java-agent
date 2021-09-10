@@ -142,6 +142,19 @@ importPackages=com.alibaba.fastjson
 在`MonitorFilter`里调用了在 plugin里加载的`com.test.dubbo.RpcUtils`。
 
 
+## 配置define 工具类
+
+在增强代码之后，如果把逻辑全部写到`@Instrument`里：
+
+* 增强代码会太复杂
+* 有重复的逻辑需要重用
+* `@Instrument`里插入的代码缺少行号
+
+那么可以定义一些工具类，在运行时动态 define 到应用的 ClassLoader 里。
+
+参考： `dubbo-test-instrument/src/main/resources/instrument.properties`里`define`配置。
+
+
 ## 编译开发
 
 * 本项目依赖 bytekit: https://github.com/alibaba/bytekit ，可能需要先`mvn clean install` bytekit
