@@ -32,7 +32,7 @@
 
     <groupId>com.alibaba.oneagent</groupId>
     <artifactId>one-java-agent-parent</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.2</version>
     <packaging>pom</packaging>
 
     <name>one-java-agent-parent</name>
