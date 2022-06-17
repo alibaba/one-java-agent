@@ -1,5 +1,7 @@
 package com.alibaba.oneagent;
 
+import com.alibaba.oneagent.inst.InstrumentationWrapper;
+
 import java.lang.instrument.Instrumentation;
 
 /**
@@ -28,6 +30,7 @@ public class BootstrapAgent {
     }
 
     private static synchronized void main(String args, Instrumentation inst, boolean premain) {
+        inst = new InstrumentationWrapper(inst);
         if (NopAgent.INSTANCE == AGENT) {
             Agent agent = new AgentImpl();
             agent.init(args, inst, premain);

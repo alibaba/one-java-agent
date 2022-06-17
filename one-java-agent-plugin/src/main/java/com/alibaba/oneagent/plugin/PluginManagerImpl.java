@@ -34,7 +34,7 @@ public class PluginManagerImpl implements PluginManager {
     private ClassLoader parentClassLoader = PluginManagerImpl.class.getClassLoader();
     private List<Plugin> plugins = new ArrayList<Plugin>();
 
-    private InstrumentationWrapper instrumentation;
+    private Instrumentation instrumentation;
 
     private ComponentManager componentManager;
 
@@ -51,7 +51,7 @@ public class PluginManagerImpl implements PluginManager {
 
     public PluginManagerImpl(Instrumentation instrumentation, ComponentManager componentManager, Properties properties,
             URL scanPluginLocation, List<URL> extPluginLocations) {
-        this.instrumentation = new InstrumentationWrapper(instrumentation);
+        this.instrumentation = instrumentation;
         this.componentManager = componentManager;
         this.properties = properties;
         this.scanPluginLocations.add(scanPluginLocation);

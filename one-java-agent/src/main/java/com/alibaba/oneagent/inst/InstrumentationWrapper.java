@@ -1,4 +1,4 @@
-package com.alibaba.oneagent.plugin;
+package com.alibaba.oneagent.inst;
 
 import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.ClassFileTransformer;
@@ -73,14 +73,14 @@ public class InstrumentationWrapper implements Instrumentation{
     @Override
     public void appendToBootstrapClassLoaderSearch(JarFile jarfile) {
         synchronized (lockForAppend) {
-            appendToBootstrapClassLoaderSearch(jarfile);
+            instrumentation.appendToBootstrapClassLoaderSearch(jarfile);
         }
     }
 
     @Override
     public void appendToSystemClassLoaderSearch(JarFile jarfile) {
         synchronized (lockForAppend) {
-            appendToSystemClassLoaderSearch(jarfile);
+            instrumentation.appendToSystemClassLoaderSearch(jarfile);
         }
     }
 
