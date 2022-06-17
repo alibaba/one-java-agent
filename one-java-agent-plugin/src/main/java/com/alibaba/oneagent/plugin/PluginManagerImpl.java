@@ -275,6 +275,7 @@ public class PluginManagerImpl implements PluginManager {
                         }
                     }
                 }, "oneagent plugin " + plugin.name() + " init");
+                thread.setDaemon(true);
                 thread.start();
             }
 
@@ -340,6 +341,7 @@ public class PluginManagerImpl implements PluginManager {
                         }
                     }
                 }, "oneagent plugin " + plugin.name() + " start");
+                thread.setDaemon(true);
                 thread.start();
             }
 
