@@ -30,7 +30,7 @@ public class BootstrapAgent {
     }
 
     private static synchronized void main(String args, Instrumentation inst, boolean premain) {
-        inst = new InstrumentationWrapper(inst);
+        inst = InstrumentationWrapper.newInstrumentationWrapper(inst);
         if (NopAgent.INSTANCE == AGENT) {
             Agent agent = new AgentImpl();
             agent.init(args, inst, premain);
