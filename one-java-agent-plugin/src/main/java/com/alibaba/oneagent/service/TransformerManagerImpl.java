@@ -114,7 +114,7 @@ public class TransformerManagerImpl implements TransformerManager, Component {
         classFileTransformer = new OneAgentClassFileTransformer(this, false);
         reClassFileTransformer = new OneAgentClassFileTransformer(this, true);
         instrumentation.addTransformer(classFileTransformer);
-        instrumentation.addTransformer(reClassFileTransformer);
+        instrumentation.addTransformer(reClassFileTransformer, true);
     }
 
     @Override
