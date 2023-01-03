@@ -19,6 +19,8 @@ import com.alibaba.oneagent.service.ComponentManagerImpl;
 import com.alibaba.oneagent.utils.FeatureCodec;
 import com.alibaba.oneagent.utils.IOUtils;
 import com.alibaba.oneagent.utils.InstrumentationUtils;
+import com.alibaba.oneagent.utils.InstrumentationWrapper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +59,8 @@ public class AgentImpl implements Agent {
     private static Logger logger;
 
     @Override
-    public void init(String args, final Instrumentation inst, boolean premain) {
+    public void init(String args, Instrumentation inst, boolean premain) {
+        inst = new InstrumentationWrapper(inst);
         this.instrumentation = inst;
 
         Properties config = this.getOneAgentConfigurationProperties(args);
