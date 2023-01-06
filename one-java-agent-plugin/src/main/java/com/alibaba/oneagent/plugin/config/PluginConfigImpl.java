@@ -3,6 +3,7 @@ package com.alibaba.oneagent.plugin.config;
 import com.alibaba.oneagent.env.MutablePropertySources;
 import com.alibaba.oneagent.env.PropertiesPropertySource;
 import com.alibaba.oneagent.env.PropertySourcesPropertyResolver;
+import com.alibaba.oneagent.plugin.DefaultPluginActivator;
 import com.alibaba.oneagent.plugin.OneAgentPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +87,7 @@ public class PluginConfigImpl extends AbstractPluginConfig {
         propertySources.addLast(new PropertiesPropertySource(PLUGIN_PROPERTIES_PROPERTY_SOURCE_NAME, pluginProperties));
 
         version = this.propertyResolver.getProperty("version");
-        pluginActivator = this.propertyResolver.getProperty("pluginActivator");
+        pluginActivator = this.propertyResolver.getProperty("pluginActivator", DefaultPluginActivator.class.getName());
         classpath = this.propertyResolver.getProperty("classpath", "lib");
         specification = this.propertyResolver.getProperty("specification");
         this.order = this.propertyResolver.getProperty("order", Integer.class, OneAgentPlugin.DEFAULT_ORDER);

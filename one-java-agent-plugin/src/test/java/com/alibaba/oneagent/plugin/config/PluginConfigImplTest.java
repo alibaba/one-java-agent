@@ -5,6 +5,8 @@ import java.util.Properties;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
+import com.alibaba.oneagent.plugin.DefaultPluginActivator;
+
 /**
  * 
  * @author hengyunabc 2021-02-19
@@ -28,6 +30,8 @@ public class PluginConfigImplTest {
         Assertions.assertThat(enabled).isFalse();
         Assertions.assertThat(impl.exportPackages()).containsExactly("com.test", "hello", "abc.xyz");
         Assertions.assertThat(impl.importPackages()).isEmpty();
+
+        Assertions.assertThat(impl.getPluginActivator()).isEqualTo("com.alibaba.oneagent.plugin.DefaultPluginActivator");
     }
 
     @Test
