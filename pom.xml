@@ -44,6 +44,7 @@
         <module>one-java-agent-spy</module>
         <module>one-java-agent-plugin</module>
         <module>demo-plugin</module>
+        <module>grpc-plugin</module>
         <module>fastjson-demo-plugin</module>
         <module>bytekit-demo-plugin</module>
         <module>dubbo-test-plugin-common</module>
@@ -62,10 +63,32 @@
         <maven.compiler.source>1.6</maven.compiler.source>
         <oneagent.deps.package>com.alibaba.oneagent.deps</oneagent.deps.package>
         <bytekit.version>0.0.8-SNAPSHOT</bytekit.version>
+        <grpc.version>1.46.0</grpc.version>
+        <opentelemetry.version>1.21.0-alpha</opentelemetry.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-bom</artifactId>
+                <version>${grpc.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.annotation</groupId>
+                <artifactId>javax.annotation-api</artifactId>
+                <version>1.3.2</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-bom-alpha</artifactId>
+                <version>${opentelemetry.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>bytekit-instrument-api</artifactId>
