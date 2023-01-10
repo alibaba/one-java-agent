@@ -7,7 +7,7 @@
         <version>0.0.2</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>profiler-configuration</artifactId>
+    <artifactId>opentelemetry-configuration</artifactId>
 
     <dependencies>
     
@@ -38,19 +38,9 @@
             <artifactId>opentelemetry-semconv</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-netty</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-protobuf</artifactId>
-        </dependency>
-
     </dependencies>
     <build>
-        <finalName>profiler-configuration</finalName>
+        <finalName>opentelemetry-configuration</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

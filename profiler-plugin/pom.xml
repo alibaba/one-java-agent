@@ -33,8 +33,10 @@
         </dependency>
         <dependency>
             <groupId>com.alibaba.oneagent</groupId>
-            <artifactId>profiler-configuration</artifactId>
+            <artifactId>opentelemetry-configuration</artifactId>
             <version>${project.version}</version>
+            <optional>true</optional>
+            <scope>provided</scope>
         </dependency>
          <dependency>
             <groupId>com.alibaba.oneagent</groupId>
@@ -44,6 +46,15 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-netty</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-protobuf</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <finalName>profiler-instrument</finalName>

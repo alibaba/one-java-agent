@@ -73,7 +73,7 @@
         
         <dependency>
             <groupId>com.alibaba.oneagent</groupId>
-            <artifactId>profiler-configuration</artifactId>
+            <artifactId>opentelemetry-configuration</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
