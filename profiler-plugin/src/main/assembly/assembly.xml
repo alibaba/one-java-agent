@@ -31,8 +31,8 @@
             <destName>plugin.properties</destName>
         </file>
         <file>
-           	<source>../trace-httpClient-instrument/target/trace-httpClient-instrument.jar</source>
-            <destName>/instrument-lib/trace-httpClient-instrument.jar</destName>
+           	<source>../profiler-instrument/target/profiler-instrument.jar</source>
+            <destName>/instrument-lib/profiler-instrument.jar</destName>
         </file>
     </files>
 </assembly>

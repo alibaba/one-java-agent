@@ -73,7 +73,7 @@
         
         <dependency>
             <groupId>com.alibaba.oneagent</groupId>
-            <artifactId>trace-configuration</artifactId>
+            <artifactId>profiler-configuration</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

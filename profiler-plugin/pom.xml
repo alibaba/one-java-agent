@@ -7,7 +7,7 @@
         <version>0.0.2</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>trace-httpClient-plugin</artifactId>
+    <artifactId>profiler-plugin</artifactId>
 
     <properties>
         <java.version>1.8</java.version>
@@ -33,12 +33,12 @@
         </dependency>
         <dependency>
             <groupId>com.alibaba.oneagent</groupId>
-            <artifactId>trace-configuration</artifactId>
+            <artifactId>profiler-configuration</artifactId>
             <version>${project.version}</version>
         </dependency>
          <dependency>
             <groupId>com.alibaba.oneagent</groupId>
-            <artifactId>trace-httpClient-instrument</artifactId>
+            <artifactId>profiler-instrument</artifactId>
             <version>${project.version}</version>
             <optional>true</optional>
             <scope>provided</scope>
@@ -46,7 +46,7 @@
 
     </dependencies>
     <build>
-        <finalName>trace-httpClient-instrument</finalName>
+        <finalName>profiler-instrument</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

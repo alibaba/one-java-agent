@@ -1,9 +1,9 @@
-package com.trace.httpclient;
+package com.alibaba.profiler;
 
 import com.alibaba.oneagent.plugin.PluginActivator;
 import com.alibaba.oneagent.plugin.PluginContext;
 
-public class TraceActivator implements PluginActivator {
+public class ProfilerActivator implements PluginActivator {
 
     @Override
     public boolean enabled(PluginContext context) {

@@ -7,7 +7,7 @@
         <version>0.0.2</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>trace-configuration</artifactId>
+    <artifactId>profiler-configuration</artifactId>
 
     <dependencies>
     
@@ -50,7 +50,7 @@
 
     </dependencies>
     <build>
-        <finalName>trace-configuration</finalName>
+        <finalName>profiler-configuration</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

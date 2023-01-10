@@ -51,9 +51,9 @@
         <module>dubbo-test-instrument</module>
         <module>dubbo-test-plugin</module>
         <module>opentelemetry-plugin</module>
-        <module>trace-configuration</module>
-        <module>trace-httpClient-instrument</module>
-        <module>trace-httpClient-plugin</module>
+        <module>profiler-configuration</module>
+        <module>profiler-instrument</module>
+        <module>profiler-plugin</module>
         <module>one-java-agent</module>
     </modules>
 
