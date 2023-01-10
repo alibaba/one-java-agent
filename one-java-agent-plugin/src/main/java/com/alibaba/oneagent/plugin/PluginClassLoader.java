@@ -58,6 +58,15 @@ public class PluginClassLoader extends URLClassLoader {
     }
 
     @Override
+    public String toString() {
+        if (pluginConfig != null) {
+            String name = pluginConfig.getName();
+            return "oneagent-" + name + "@" + Integer.toHexString(hashCode());
+        }
+        return super.toString();
+    }
+
+    @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         synchronized (LOCK_PROVIDER.getLock(this, name)) {
 
