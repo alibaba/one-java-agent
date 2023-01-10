@@ -4,18 +4,15 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
 import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
-import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
 import io.opentelemetry.context.Scope;
-import io.opentelemetry.context.propagation.ContextPropagators;
 import io.opentelemetry.exporter.jaeger.JaegerGrpcSpanExporter;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.resources.Resource;
-import io.opentelemetry.sdk.resources.ResourceBuilder;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import io.opentelemetry.semconv.resource.attributes.ResourceAttributes;
@@ -34,13 +31,15 @@ public class TraceConfiguration {
             Properties prop = new Properties();
             prop.load(TraceConfiguration.class.getResourceAsStream("/trace.properties"));
 
-            String jaegerHost = System.getenv("JAEGER_AGENT_HOST");
-            if (jaegerHost == null || jaegerHost.equals(""))
-                jaegerHost = "127.0.0.1";
-            int jaegerPort = Integer.valueOf(prop.getProperty("jaegerPort").trim());
-            String serviceName = prop.getProperty("appName").trim();
+            String jaegerEndpoint = System.getenv("JAEGER_ENDPOINT");
+            if (jaegerEndpoint == null) {
+                jaegerEndpoint = "http://127.0.0.1:14250";
+            }
+                
+            String appName = prop.getProperty("appName").trim();
 
-            initOpenTelemetry(jaegerHost, jaegerPort, serviceName);
+            OpenTelemetry openTelemetry = initOpenTelemetry(jaegerEndpoint, appName);
+            GlobalOpenTelemetry.set(openTelemetry);
 
             // 设置tracer和parentSpan
             tracer = GlobalOpenTelemetry.getTracer("com.alibaba.oneagent.trace");
@@ -55,42 +54,35 @@ public class TraceConfiguration {
         }
         return tracer;
     }
-
+    
     /**
-     * Initialize an OpenTelemetry SDK with a Jaeger exporter and a
-     * SimpleSpanProcessor.
+     * Initialize an OpenTelemetry SDK with a Jaeger exporter and a SimpleSpanProcessor.
+     *
+     * @param jaegerEndpoint The endpoint of your Jaeger instance.
+     * @return A ready-to-use {@link OpenTelemetry} instance.
      */
-    private static void initOpenTelemetry(String jaegerHost, int jaegerPort, String serviceName) {
+    public static OpenTelemetry initOpenTelemetry(String jaegerEndpoint, String appName) {
+      // Export traces to Jaeger
+      JaegerGrpcSpanExporter jaegerExporter =
+          JaegerGrpcSpanExporter.builder()
+              .setEndpoint(jaegerEndpoint)
+              .setTimeout(30, TimeUnit.SECONDS)
+              .build();
+      Resource serviceNameResource =
+          Resource.create(Attributes.of(ResourceAttributes.SERVICE_NAME, "bean-" + appName));
 
-        // Create a channel towards Jaeger end point
-        ManagedChannel jaegerChannel = ManagedChannelBuilder.forAddress(jaegerHost, jaegerPort).usePlaintext().build();
+      // Set to process the spans by the Jaeger Exporter
+      SdkTracerProvider tracerProvider =
+          SdkTracerProvider.builder()
+              .addSpanProcessor(SimpleSpanProcessor.create(jaegerExporter))
+              .setResource(Resource.getDefault().merge(serviceNameResource))
+              .build();
+      OpenTelemetrySdk openTelemetry =
+          OpenTelemetrySdk.builder().setTracerProvider(tracerProvider).build();
 
-        // 导出traces到Jaeger
-        JaegerGrpcSpanExporter jaegerExporter = JaegerGrpcSpanExporter.builder().setChannel(jaegerChannel)
-                .setTimeout(30, TimeUnit.SECONDS).build();
+      // it's always a good idea to shut down the SDK cleanly at JVM exit.
+      Runtime.getRuntime().addShutdownHook(new Thread(tracerProvider::close));
 
-        ResourceBuilder resourceBuilder = new ResourceBuilder().putAll(Resource.getDefault())
-                .put(ResourceAttributes.SERVICE_NAME, "otel-" + (serviceName.isEmpty() ? "appName" : serviceName));
-
-        // Set to process the spans by the Jaeger Exporter
-        final SdkTracerProvider tracerProvider = SdkTracerProvider.builder()
-                .addSpanProcessor(SimpleSpanProcessor.create(jaegerExporter)).setResource(resourceBuilder.build())
-                .build();
-
-        OpenTelemetrySdk.builder().setTracerProvider(tracerProvider)
-                .setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance()))
-                .buildAndRegisterGlobal();
-
-        // 关闭 SDK
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (parentSpan != null) {
-                    parentSpan.end();
-                    scope.close();
-                }
-                tracerProvider.close();
-            }
-        }));
+      return openTelemetry;
     }
 }
