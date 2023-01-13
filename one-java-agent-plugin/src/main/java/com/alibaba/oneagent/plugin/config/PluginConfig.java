@@ -37,7 +37,7 @@ public interface PluginConfig extends PropertyResolver {
     int getOrder();
 
     /**
-     * get start plugin activator class name  插件激活类的名称
+     * get start plugin activator class name 插件激活类的名称
      *
      * @return
      */
@@ -60,4 +60,6 @@ public interface PluginConfig extends PropertyResolver {
     List<String> exportPackages();
 
     List<String> importPackages();
+
+    boolean isLogIsolation();
 }

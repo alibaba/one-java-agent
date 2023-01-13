@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.Properties;
 import java.util.jar.JarFile;
 
+import com.alibaba.oneagent.plugin.classloader.PluginClassLoader;
 import com.alibaba.oneagent.plugin.config.TraditionalPluginConfigImpl;
 import com.alibaba.oneagent.utils.JarUtils;
 

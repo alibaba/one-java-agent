@@ -71,6 +71,11 @@ public class PluginConfigImpl extends AbstractPluginConfig {
     private List<String> importPackages;
     private List<String> exportPackages;
 
+    /**
+     * 插件日志隔离，保证从自身classloader加载日志类和配置
+     */
+    private boolean logIsolation;
+
     public PluginConfigImpl(Properties globalProperties, Properties pluginProperties) {
         this.name = pluginProperties.getProperty("name");
         if (this.name == null) {
@@ -94,6 +99,7 @@ public class PluginConfigImpl extends AbstractPluginConfig {
         this.enabled = this.propertyResolver.getProperty("enabled", Boolean.class, Boolean.TRUE);
         this.importPackages = Arrays.asList(this.propertyResolver.getProperty("importPackages", String[].class, new String[0]));
         this.exportPackages = Arrays.asList(this.propertyResolver.getProperty("exportPackages", String[].class, new String[0]));
+        this.logIsolation = this.propertyResolver.getProperty("logIsolation", Boolean.class, Boolean.FALSE);
     }
 
     /**
@@ -185,4 +191,8 @@ public class PluginConfigImpl extends AbstractPluginConfig {
         return importPackages;
     }
 
+    @Override
+    public boolean isLogIsolation() {
+        return logIsolation;
+    }
 }

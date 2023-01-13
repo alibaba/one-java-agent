@@ -18,6 +18,7 @@ import com.alibaba.bytekit.asm.instrument.InstrumentConfig;
 import com.alibaba.bytekit.asm.instrument.InstrumentParseResult;
 import com.alibaba.bytekit.asm.instrument.InstrumentTemplate;
 import com.alibaba.bytekit.asm.instrument.InstrumentTransformer;
+import com.alibaba.oneagent.plugin.classloader.PluginClassLoader;
 import com.alibaba.oneagent.plugin.config.PluginConfigImpl;
 import com.alibaba.oneagent.service.ComponentManager;
 import com.alibaba.oneagent.service.TransformerManager;

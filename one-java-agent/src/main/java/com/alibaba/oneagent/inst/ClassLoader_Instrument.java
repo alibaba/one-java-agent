@@ -43,7 +43,7 @@ public abstract class ClassLoader_Instrument {
          * </pre>
          */
         boolean isPluginClassLoader = false;
-        isPluginClassLoader = this.getClass().getName().equals("com.alibaba.oneagent.plugin.PluginClassLoader");
+        isPluginClassLoader = this.getClass().getName().equals("com.alibaba.oneagent.plugin.classloader.PluginClassLoader");
 
         if (!isPluginClassLoader) {
             clazz = AgentSpyBridge.spy().loadClass(name);

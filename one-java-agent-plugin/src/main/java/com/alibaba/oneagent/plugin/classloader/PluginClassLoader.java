@@ -1,9 +1,10 @@
-package com.alibaba.oneagent.plugin;
+package com.alibaba.oneagent.plugin.classloader;
 
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -23,6 +24,15 @@ import com.alibaba.oneagent.plugin.share.SharedService;
  *
  */
 public class PluginClassLoader extends URLClassLoader {
+    private static final String[] LOG_PACKAGES = { "org.slf4j", "org.apache.log4j", "ch.qos.logback",
+            "org.apache.logging.log4j" };
+    private static final String[] LOG_RESOURCES = { "log4j.properties", "log4j.xml", "logback.configurationFile",
+            "logback.xml", "logback-test.xml", "logback.groovy",
+            // https://logging.apache.org/log4j/2.x/manual/configuration.html
+            "log4j2-test.properties", "log4j2-test.yaml", "log4j2-test.yml", "log4j2-test.json", "log4j2-test.jsn",
+            "log4j2-test.xml", "log4j2.properties", "log4j2.yaml", "log4j2.yml", "log4j2.json", "log4j2.jsn",
+            "log4j2.xml", };
+
     private static final Logger logger = LoggerFactory.getLogger(PluginClassLoader.class);
 
     private static LockProvider LOCK_PROVIDER = setupLockProvider();
@@ -32,6 +42,16 @@ public class PluginClassLoader extends URLClassLoader {
     private PluginConfig pluginConfig;
 
     private SharedService sharedService;
+
+    /**
+     * 优先加载
+     */
+    private ClassFilter classFilter;
+
+    /**
+     * 优先加载的
+     */
+    private ResourceFilter resourceFilter;
 
     public PluginClassLoader(URL[] urls, ClassLoader parent) {
         super(urls, parent);
@@ -54,6 +74,11 @@ public class PluginClassLoader extends URLClassLoader {
             for (String p : exportPackages) {
                 sharedService.registerClassLoader(p, this);
             }
+        }
+
+        if (pluginConfig.isLogIsolation()) {
+            this.classFilter = new SimpleClassFilter(Arrays.asList(LOG_PACKAGES));
+            this.resourceFilter = new SimpleResourceFilter(Arrays.asList(LOG_PACKAGES), Arrays.asList(LOG_RESOURCES));
         }
     }
 
@@ -81,7 +106,12 @@ public class PluginClassLoader extends URLClassLoader {
                 return super.loadClass(name, resolve);
             }
 
-            // 3. import
+            // 3. 显式配置优先从自身加载的
+            if (classFilter != null && classFilter.matched(name)) {
+                return classFilter.loadClass(name);
+            }
+
+            // 4. import
             if (this.importPackages != null && !importPackages.isEmpty()) {
                 // TODO 用map + 缓存 取更快，还是判断数组快
                 for (String importPackage : importPackages) {
@@ -102,7 +132,7 @@ public class PluginClassLoader extends URLClassLoader {
                 }
             }
 
-            // 4. 从插件自身urls加载
+            // 5. 从插件自身urls加载
             try {
                 Class<?> aClass = findClass(name);
                 if (resolve) {
@@ -118,8 +148,17 @@ public class PluginClassLoader extends URLClassLoader {
 
     @Override
     public URL getResource(String name) {
+        // 优先加载
+        URL resource = null;
+        if (resourceFilter != null) {
+            resource = resourceFilter.getResource(name);
+            if (resource != null) {
+                return resource;
+            }
+        }
+
         if (this.importPackages != null && !importPackages.isEmpty()) {
-            URL resource = this.sharedService.getResource(name);
+            resource = this.sharedService.getResource(name);
             if (resource != null) {
                 return resource;
             }
@@ -129,6 +168,13 @@ public class PluginClassLoader extends URLClassLoader {
 
     @Override
     public Enumeration<URL> getResources(String name) throws IOException {
+        // 优先加载
+        if (resourceFilter != null) {
+            Enumeration<URL> fromFilter = resourceFilter.getResources(name);
+            // TODO 是否要合并加载
+            return fromFilter;
+        }
+
         if (this.importPackages != null && !importPackages.isEmpty()) {
             // TODO 是否要有选项，只查找import，忽略自身的？
             Enumeration<URL> resources = this.sharedService.getResources(name);
@@ -209,5 +255,21 @@ public class PluginClassLoader extends URLClassLoader {
             return classLoader.getClassLoadingLock(className);
         }
 
+    }
+
+    public ClassFilter getClassFilter() {
+        return classFilter;
+    }
+
+    public void setClassFilter(ClassFilter classFilter) {
+        this.classFilter = classFilter;
+    }
+
+    public ResourceFilter getResourceFilter() {
+        return resourceFilter;
+    }
+
+    public void setResourceFilter(ResourceFilter resourceFilter) {
+        this.resourceFilter = resourceFilter;
     }
 }

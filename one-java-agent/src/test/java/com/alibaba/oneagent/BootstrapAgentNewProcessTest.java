@@ -93,6 +93,10 @@ public class BootstrapAgentNewProcessTest {
 
         // 测试加载 fastjson-demo-plugin 里的类
         Assertions.assertThat(processOutput).contains("DemoActivator: {\"name\":\"DemoActivator\"}");
+
+        // 测试加载 demo-plugin 里加载的日志类路径
+        Assertions.assertThat(processOutput).containsSubsequence("logger url:", "demo-plugin/target/demo-plugin",
+                "logback-classic-1.2.9.jar");
     }
 
     @Test
