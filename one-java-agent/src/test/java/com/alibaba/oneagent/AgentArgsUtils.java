@@ -23,7 +23,7 @@ public class AgentArgsUtils {
 
         String file = location.getFile();
 
-        String version = readVersion(new File(file, "../../pom.xml"));
+        String version = readVersion(new File(file, "../../../pom.xml"));
 
         File fastjsonDemoPluginDir = new File(file, "../../../fastjson-demo-plugin/target/fastjson-demo-plugin@" + version);
         File bytekitDemoPluginDir = new File(file, "../../../bytekit-demo-plugin/target/bytekit-demo-plugin@" + version);
@@ -52,9 +52,9 @@ public class AgentArgsUtils {
             String pomStr = IOUtils.toString(inputStream);
 
             for (String line : pomStr.split("\\r?\\n")) {
-                if (line.contains("<version>")) {
-                    int startIndex = line.indexOf("<version>") + "<version>".length();
-                    int endIndex = line.indexOf("</version>");
+                if (line.contains("<revision>")) {
+                    int startIndex = line.indexOf("<revision>") + "<revision>".length();
+                    int endIndex = line.indexOf("</revision>");
                     String version = line.substring(startIndex, endIndex);
                     return version;
                 }

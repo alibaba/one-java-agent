@@ -60,8 +60,8 @@
     <properties>
         <revision>0.0.2-SNAPSHOT</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.target>1.6</maven.compiler.target>
-        <maven.compiler.source>1.6</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
         <oneagent.deps.package>com.alibaba.oneagent.deps</oneagent.deps.package>
         <bytekit.version>0.0.8-SNAPSHOT</bytekit.version>
         <grpc.version>1.46.0</grpc.version>
