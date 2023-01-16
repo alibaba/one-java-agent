@@ -5,6 +5,8 @@ target/
 !**/src/test/**
 *.versionsBackup
 
+.flattened-pom.xml
+
 ### STS ###
 .apt_generated
 .classpath
