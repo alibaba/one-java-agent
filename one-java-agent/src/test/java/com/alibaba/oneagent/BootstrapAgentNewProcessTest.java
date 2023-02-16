@@ -97,6 +97,8 @@ public class BootstrapAgentNewProcessTest {
         // 测试加载 demo-plugin 里加载的日志类路径
         Assertions.assertThat(processOutput).containsSubsequence("logger url:", "demo-plugin/target/demo-plugin",
                 "logback-classic-1.2.9.jar");
+        // 测试 demo-plugin 加载注入配置项
+        Assertions.assertThat(processOutput).containsSubsequence("demoConfig: testValue", "nestConfig: nnn");
     }
 
     @Test

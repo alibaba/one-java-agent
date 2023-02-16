@@ -1,4 +1,4 @@
-package com.alibaba.oneagent.plugin.properties;
+package com.alibaba.oneagent.plugin.config;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,7 +11,9 @@ import java.lang.annotation.Target;
  *
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface NestedConfig {
+@Target(ElementType.TYPE)
+public @interface Config {
+
+    String prefix() default "";
 
 }

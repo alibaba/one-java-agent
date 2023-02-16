@@ -5,8 +5,6 @@ import java.util.Properties;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
-import com.alibaba.oneagent.plugin.DefaultPluginActivator;
-
 /**
  * 
  * @author hengyunabc 2021-02-19
