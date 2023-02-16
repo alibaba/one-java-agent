@@ -9,6 +9,7 @@ import java.util.Properties;
 import java.util.jar.JarFile;
 
 import com.alibaba.oneagent.plugin.classloader.PluginClassLoader;
+import com.alibaba.oneagent.plugin.config.PluginConfig;
 import com.alibaba.oneagent.plugin.config.TraditionalPluginConfigImpl;
 import com.alibaba.oneagent.utils.JarUtils;
 
@@ -145,4 +146,8 @@ public class TraditionalPlugin implements Plugin {
         return this.location;
     }
 
+    @Override
+    public PluginConfig config() {
+        return this.pluginConfig;
+    }
 }

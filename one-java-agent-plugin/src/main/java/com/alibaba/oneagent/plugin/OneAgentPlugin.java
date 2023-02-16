@@ -19,6 +19,7 @@ import com.alibaba.bytekit.asm.instrument.InstrumentParseResult;
 import com.alibaba.bytekit.asm.instrument.InstrumentTemplate;
 import com.alibaba.bytekit.asm.instrument.InstrumentTransformer;
 import com.alibaba.oneagent.plugin.classloader.PluginClassLoader;
+import com.alibaba.oneagent.plugin.config.PluginConfig;
 import com.alibaba.oneagent.plugin.config.PluginConfigImpl;
 import com.alibaba.oneagent.service.ComponentManager;
 import com.alibaba.oneagent.service.TransformerManager;
@@ -247,6 +248,11 @@ public class OneAgentPlugin implements Plugin {
         }
 
         return urls;
+    }
+
+    @Override
+    public PluginConfig config() {
+        return this.pluginConfig;
     }
 
 }

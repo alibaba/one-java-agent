@@ -2,6 +2,8 @@ package com.alibaba.oneagent.plugin;
 
 import java.net.URL;
 
+import com.alibaba.oneagent.plugin.config.PluginConfig;
+
 /**
  * @author hengyunabc 2019-02-27
  */
@@ -70,4 +72,6 @@ public interface Plugin {
      * @return
      */
     URL location();
+
+    PluginConfig config();
 }
