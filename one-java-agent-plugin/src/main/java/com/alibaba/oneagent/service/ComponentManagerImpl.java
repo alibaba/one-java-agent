@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Properties;
 import java.util.ServiceLoader;
 
 import org.slf4j.Logger;
@@ -27,7 +28,7 @@ public class ComponentManagerImpl implements ComponentManager {
     }
 
     @Override
-    public void initComponents() {
+    public void initComponents(Properties properties) {
         logger.info("Init available components");
         this.components = scanForAvailableComponents();
         try {
@@ -37,7 +38,7 @@ public class ComponentManagerImpl implements ComponentManager {
         }
         for (Component component : components) {
             logger.info("Init component {}", component.getName());
-            component.init();
+            component.init(properties);
         }
     }
 

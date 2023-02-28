@@ -1,5 +1,7 @@
 package com.alibaba.oneagent.service;
 
+import java.util.Properties;
+
 /**
  * @author hengyunabc 2020-12-17
  */
@@ -17,7 +19,7 @@ public interface ComponentManager {
     /**
      * init all component from spi services
      */
-    void initComponents();
+    void initComponents(Properties properties);
 
     /**
      * start all component

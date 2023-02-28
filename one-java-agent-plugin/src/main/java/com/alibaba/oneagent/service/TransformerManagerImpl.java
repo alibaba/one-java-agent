@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * 
@@ -105,12 +106,7 @@ public class TransformerManagerImpl implements TransformerManager, Component {
 	}
 
     @Override
-    public int order() {
-        return 0;
-    }
-
-    @Override
-    public void init() {
+    public void init(Properties properties) {
         classFileTransformer = new OneAgentClassFileTransformer(this, false);
         reClassFileTransformer = new OneAgentClassFileTransformer(this, true);
         instrumentation.addTransformer(classFileTransformer);

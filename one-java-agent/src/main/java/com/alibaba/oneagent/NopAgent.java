@@ -28,7 +28,7 @@ public class NopAgent implements Agent {
         }
 
         @Override
-        public void initComponents() {
+        public void initComponents(Properties properties) {
 
         }
 

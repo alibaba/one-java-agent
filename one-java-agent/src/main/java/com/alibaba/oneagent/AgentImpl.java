@@ -77,7 +77,7 @@ public class AgentImpl implements Agent {
             return;
         }
 
-        this.initComponents(inst);
+        this.initComponents(inst, config);
 
         this.enhanceClassLoader(config);
 
@@ -93,9 +93,9 @@ public class AgentImpl implements Agent {
      *
      * @param inst
      */
-    private void initComponents(Instrumentation inst) {
+    private void initComponents(Instrumentation inst, Properties properties) {
         componentManager = new ComponentManagerImpl(inst);
-        componentManager.initComponents();
+        componentManager.initComponents(properties);
         AgentSpyImpl.initAgentSpy(componentManager);
     }
 

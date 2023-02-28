@@ -107,16 +107,6 @@ public class SharedServiceImpl implements SharedService, Component {
     }
 
     @Override
-    public int order() {
-        return 0;
-    }
-
-    @Override
-    public void init() {
-
-    }
-
-    @Override
     public void start() {
 
     }
