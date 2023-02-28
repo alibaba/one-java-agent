@@ -35,7 +35,7 @@ public class PluginClassLoader extends URLClassLoader {
 
     private static final Logger logger = LoggerFactory.getLogger(PluginClassLoader.class);
 
-    private static LockProvider LOCK_PROVIDER = setupLockProvider();
+    private static final ClassLoader EXTCLASSLOADER = ClassLoader.getSystemClassLoader().getParent();
 
     private List<String> importPackages;
 
@@ -93,57 +93,55 @@ public class PluginClassLoader extends URLClassLoader {
 
     @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-        synchronized (LOCK_PROVIDER.getLock(this, name)) {
 
-            // 1. loaded class
-            final Class<?> loadedClass = findLoadedClass(name);
-            if (loadedClass != null) {
-                return loadedClass;
-            }
+        // 1. loaded class
+        final Class<?> loadedClass = findLoadedClass(name);
+        if (loadedClass != null) {
+            return loadedClass;
+        }
 
-            // 2. 优先从parent（SystemClassLoader）里加载系统类，避免抛出ClassNotFoundException
-            if (name != null && (name.startsWith("sun.") || name.startsWith("java."))) {
-                return super.loadClass(name, resolve);
-            }
+        // 2. 优先从parent（SystemClassLoader）里加载系统类，避免抛出ClassNotFoundException
+        if (name != null && (name.startsWith("sun.") || name.startsWith("java."))) {
+            return EXTCLASSLOADER.loadClass(name);
+        }
 
-            // 3. 显式配置优先从自身加载的
-            if (classFilter != null && classFilter.matched(name)) {
-                return classFilter.loadClass(name);
-            }
+        // 3. 显式配置优先从自身加载的
+        if (classFilter != null && classFilter.matched(name)) {
+            return classFilter.loadClass(name);
+        }
 
-            // 4. import
-            if (this.importPackages != null && !importPackages.isEmpty()) {
-                // TODO 用map + 缓存 取更快，还是判断数组快
-                for (String importPackage : importPackages) {
-                    if (name.startsWith(importPackage)) {
-                        try {
-                            Class<?> clazz = this.sharedService.loadClass(name);
-                            if (clazz != null) {
-                                return clazz;
-                            }
-                        } catch (ClassNotFoundException e) {
-                            // ignore
-                            if (logger.isDebugEnabled()) {
-                                logger.info("plugin: {} can not load class: {} from import package: {}",
-                                        pluginConfig.getName(), name, importPackage);
-                            }
+        // 4. import
+        if (this.importPackages != null && !importPackages.isEmpty()) {
+            // TODO 用map + 缓存 取更快，还是判断数组快
+            for (String importPackage : importPackages) {
+                if (name.startsWith(importPackage)) {
+                    try {
+                        Class<?> clazz = this.sharedService.loadClass(name);
+                        if (clazz != null) {
+                            return clazz;
+                        }
+                    } catch (ClassNotFoundException e) {
+                        // ignore
+                        if (logger.isDebugEnabled()) {
+                            logger.info("plugin: {} can not load class: {} from import package: {}",
+                                    pluginConfig.getName(), name, importPackage);
                         }
                     }
                 }
             }
-
-            // 5. 从插件自身urls加载
-            try {
-                Class<?> aClass = findClass(name);
-                if (resolve) {
-                    resolveClass(aClass);
-                }
-                return aClass;
-            } catch (Exception e) {
-                // ignore
-            }
-            return super.loadClass(name, resolve);
         }
+
+        // 5. 从插件自身urls加载
+        try {
+            Class<?> aClass = findClass(name);
+            if (resolve) {
+                resolveClass(aClass);
+            }
+            return aClass;
+        } catch (Exception e) {
+            // ignore
+        }
+        return super.loadClass(name, resolve);
     }
 
     @Override
@@ -222,39 +220,6 @@ public class PluginClassLoader extends URLClassLoader {
             }
             return enums[index].nextElement();
         }
-    }
-
-    private static LockProvider setupLockProvider() {
-        try {
-            ClassLoader.registerAsParallelCapable();
-            return new Java7LockProvider();
-        } catch (Throwable ex) {
-            return new LockProvider();
-        }
-    }
-
-    /**
-     * Strategy used to provide the synchronize lock object to use when loading
-     * classes.
-     */
-    private static class LockProvider {
-
-        public Object getLock(PluginClassLoader classLoader, String className) {
-            return classLoader;
-        }
-
-    }
-
-    /**
-     * Java 7 specific {@link LockProvider}.
-     */
-    private static class Java7LockProvider extends LockProvider {
-
-        @Override
-        public Object getLock(PluginClassLoader classLoader, String className) {
-            return classLoader.getClassLoadingLock(className);
-        }
-
     }
 
     public ClassFilter getClassFilter() {
