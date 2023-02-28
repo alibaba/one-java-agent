@@ -17,7 +17,8 @@ public class OneAgentClassFileTransformer implements ClassFileTransformer {
     private static final Logger logger = LoggerFactory.getLogger(OneAgentClassFileTransformer.class);
     private TransformerManager transformerManager;
     private boolean canRetransform;
-
+    private static final ClassLoader SELF_CLASSLOADER = OneAgentClassFileTransformer.class.getClassLoader();
+    private static final boolean NOT_SYSTEM_CLASSLOADER = !ClassLoader.getSystemClassLoader().equals(SELF_CLASSLOADER);
     public OneAgentClassFileTransformer(TransformerManager transformerManager, boolean canRetransform) {
         this.transformerManager = transformerManager;
         this.canRetransform = canRetransform;
@@ -26,6 +27,14 @@ public class OneAgentClassFileTransformer implements ClassFileTransformer {
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
             ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+        // 避免增强自身 ClassLoader 加载的类，容易死锁
+        if (NOT_SYSTEM_CLASSLOADER && SELF_CLASSLOADER.equals(loader)) {
+            return null;
+        }
+        // 避免增强 oneagent 自身的类
+        if (className.startsWith("com/alibaba/oneagent/")) {
+            return null;
+        }
 
         List<ClassFileTransformer> transformers = transformerManager.classFileTransformer(canRetransform);
 
