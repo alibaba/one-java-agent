@@ -33,7 +33,7 @@ public class SharedServiceImpl implements SharedService, Component {
             }
 
             for (Entry<String, ClassLoader> entry : loaderMap.entrySet()) {
-                if (entry.getKey().startsWith(packageName)) {
+                if (packageName.startsWith(entry.getKey())) {
                     // 增加 子package 对应的 classloader 的记录，下次不需要全匹配
                     loaderMap.put(packageName, entry.getValue());
                     return entry.getValue().loadClass(className);
