@@ -1,3 +1,4 @@
 com.alibaba.oneagent.service.TransformerManagerImpl
 com.alibaba.oneagent.service.ClassLoaderHandlerManagerImpl
 com.alibaba.oneagent.plugin.share.SharedServiceImpl
+com.alibaba.oneagent.service.OneAgentInfoServiceImpl

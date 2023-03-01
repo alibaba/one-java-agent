@@ -114,19 +114,9 @@ public class TransformerManagerImpl implements TransformerManager, Component {
     }
 
     @Override
-    public void start() {
-        
-    }
-
-    @Override
     public void stop() {
         instrumentation.removeTransformer(classFileTransformer);
         instrumentation.removeTransformer(reClassFileTransformer);
-    }
-
-    @Override
-    public String getName() {
-        return this.getClass().getSimpleName();
     }
 
 }

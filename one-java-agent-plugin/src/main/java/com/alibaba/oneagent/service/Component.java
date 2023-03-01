@@ -26,17 +26,21 @@ public interface Component {
     /**
      * start component after init method
      */
-    void start();
+    default void start() {
+    };
 
     /**
      * stop component
      */
-    void stop();
+    default void stop() {
+    };
 
     /**
      * get component name
      *
      * @return
      */
-    String getName();
+    default String getName() {
+        return this.getClass().getSimpleName();
+    }
 }

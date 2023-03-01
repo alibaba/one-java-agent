@@ -2,18 +2,27 @@ package com.alibaba.oneagent.service;
 
 import java.util.Properties;
 
-public class OneAgentInfoServiceImpl implements OneAgentInfoService{
+public class OneAgentInfoServiceImpl implements OneAgentInfoService, Component {
+
+    private Properties properties;
+
+    @Override
+    public void init(Properties properties) {
+        this.properties = properties;
+    }
 
     @Override
     public String appName() {
-        // TODO Auto-generated method stub
-        return null;
+        Object value = properties.get(APPNAME_KEY);
+        if (value != null) {
+            return value.toString();
+        }
+        return "unknown";
     }
 
     @Override
     public Properties config() {
-        // TODO Auto-generated method stub
-        return null;
+        return properties;
     }
 
 }

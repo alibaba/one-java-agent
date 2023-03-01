@@ -107,18 +107,8 @@ public class SharedServiceImpl implements SharedService, Component {
     }
 
     @Override
-    public void start() {
-
-    }
-
-    @Override
     public void stop() {
         loaderMap.clear();
-    }
-
-    @Override
-    public String getName() {
-        return this.getClass().getSimpleName();
     }
 
     /**

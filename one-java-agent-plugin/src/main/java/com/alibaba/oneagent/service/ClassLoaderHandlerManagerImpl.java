@@ -47,18 +47,8 @@ public class ClassLoaderHandlerManagerImpl implements ClassLoaderHandlerManager,
     }
 
     @Override
-    public void start() {
-
-    }
-
-    @Override
     public void stop() {
         this.handlers = new ClassLoaderHandler[0];
-    }
-
-    @Override
-    public String getName() {
-        return this.getClass().getSimpleName();
     }
 
     @Override

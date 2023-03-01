@@ -1,6 +1,7 @@
 package com.alibaba.oneagent.service;
 
 import java.lang.instrument.Instrumentation;
+import java.util.Properties;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
@@ -18,11 +19,15 @@ public class ComponentManagerImplTest {
     public void test() {
         Instrumentation instrumentation = ByteBuddyAgent.install();
         ComponentManagerImpl componentManagerImpl = new ComponentManagerImpl(instrumentation);
-        componentManagerImpl.initComponents();
+        Properties properties = new Properties();
+        properties.put(OneAgentInfoService.APPNAME_KEY, "helloApp");
+        componentManagerImpl.initComponents(properties);
 
         TransformerManager transformerManager = componentManagerImpl.getComponent(TransformerManager.class);
-
         Assertions.assertThat(transformerManager).isNotNull();
+
+        OneAgentInfoService agentInfoService = componentManagerImpl.getComponent(OneAgentInfoService.class);
+        Assertions.assertThat(agentInfoService.appName()).isEqualTo("helloApp");
     }
 
 }
