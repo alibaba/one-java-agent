@@ -36,15 +36,21 @@ public class PluginConfigImplTest {
     public void testGlobalConfig() {
 
         Properties globalProperties = new Properties();
+        globalProperties.put("version", "golbal-version");
         globalProperties.put(PluginConfigImpl.PLUGIN_CONFIG_PREFIX + "test" + ".enabled", "false");
         Properties pluginProperties = new Properties();
         pluginProperties.put("name", "test");
+        pluginProperties.put("version", "plugin-version");
 
         PluginConfigImpl impl = new PluginConfigImpl(globalProperties, pluginProperties);
+
+        System.err.println(impl.getVersion());
 
         boolean enabled = impl.isEnabled();
 
         Assertions.assertThat(enabled).isFalse();
+
+        Assertions.assertThat(impl.getVersion()).isEqualTo("plugin-version");
     }
     
     @Test

@@ -25,4 +25,13 @@ public class OneAgentInfoServiceImpl implements OneAgentInfoService, Component {
         return properties;
     }
 
+    @Override
+    public String version() {
+        Object value = properties.get(VERSION_KEY);
+        if (value != null) {
+            return value.toString();
+        }
+        return "unknown";
+    }
+
 }

@@ -1,6 +1,8 @@
 package com.alibaba.oneagent.tunnel;
 
 import java.lang.invoke.MethodHandles;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +25,7 @@ public class TunnelPluginActivator implements PluginActivator {
     @Override
     public boolean enabled(PluginContext context) {
         System.out.println("enabled " + this.getClass().getName());
-        
+
         this.getClass().getProtectionDomain().getCodeSource().getLocation().getFile();
 
         return true;
@@ -38,11 +40,17 @@ public class TunnelPluginActivator implements PluginActivator {
         localServiceManager = new LocalServiceManager();
         localServiceManager.start();
 
-        String appName = context.getComponentManager().getComponent(OneAgentInfoService.class).appName();
+        OneAgentInfoService agentInfoService = context.getComponentManager().getComponent(OneAgentInfoService.class);
+        String appName = agentInfoService.appName();
+        String version = agentInfoService.version();
 
         tunnelClient = new TunnelClient();
         tunnelClient.setAppname(appName);
         tunnelClient.setTunnelServerUrl(tunnelConifg.getTunnelServerUrl());
+        Map<String, String> meta = new HashMap<>();
+        meta.put("version", version);
+        meta.put("tunnelVersion", context.getPlugin().config().getVersion());
+        tunnelClient.setMeta(meta);
 
         try {
             // 第一次连接可能网络失败，忽略

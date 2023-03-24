@@ -21,6 +21,7 @@ public class ComponentManagerImplTest {
         ComponentManagerImpl componentManagerImpl = new ComponentManagerImpl(instrumentation);
         Properties properties = new Properties();
         properties.put(OneAgentInfoService.APPNAME_KEY, "helloApp");
+        properties.put(OneAgentInfoService.VERSION_KEY, "0.0.1");
         componentManagerImpl.initComponents(properties);
 
         TransformerManager transformerManager = componentManagerImpl.getComponent(TransformerManager.class);
@@ -28,6 +29,7 @@ public class ComponentManagerImplTest {
 
         OneAgentInfoService agentInfoService = componentManagerImpl.getComponent(OneAgentInfoService.class);
         Assertions.assertThat(agentInfoService.appName()).isEqualTo("helloApp");
+        Assertions.assertThat(agentInfoService.version()).isEqualTo("0.0.1");
     }
 
 }
