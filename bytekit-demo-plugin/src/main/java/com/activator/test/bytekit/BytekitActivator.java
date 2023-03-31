@@ -1,8 +1,9 @@
 package com.activator.test.bytekit;
 
 import com.alibaba.bytekit.ByteKit;
-import com.alibaba.oneagent.plugin.PluginActivator;
-import com.alibaba.oneagent.plugin.PluginContext;
+
+import io.oneagent.plugin.PluginActivator;
+import io.oneagent.plugin.PluginContext;
 
 /**
  * 测试基它插件 import com.alibaba.bytekit 时，使用的是否本插件里的类

@@ -1,7 +1,7 @@
 package com.alibaba.profiler;
 
-import com.alibaba.oneagent.plugin.PluginActivator;
-import com.alibaba.oneagent.plugin.PluginContext;
+import io.oneagent.plugin.PluginActivator;
+import io.oneagent.plugin.PluginContext;
 
 public class ProfilerActivator implements PluginActivator {
 

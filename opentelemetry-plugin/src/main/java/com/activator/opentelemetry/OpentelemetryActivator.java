@@ -1,8 +1,8 @@
 package com.activator.opentelemetry;
 
-import com.alibaba.oneagent.plugin.PluginActivator;
-import com.alibaba.oneagent.plugin.PluginContext;
-import com.alibaba.oneagent.service.ClassLoaderHandlerManager;
+import io.oneagent.plugin.PluginActivator;
+import io.oneagent.plugin.PluginContext;
+import io.oneagent.service.ClassLoaderHandlerManager;
 
 public class OpentelemetryActivator implements PluginActivator {
     private String name = this.getClass().getSimpleName();

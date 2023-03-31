@@ -1,7 +1,7 @@
 package com.activator.test;
 
-import com.alibaba.oneagent.plugin.config.Config;
-import com.alibaba.oneagent.plugin.config.NestedConfig;
+import io.oneagent.plugin.config.Config;
+import io.oneagent.plugin.config.NestedConfig;
 
 @Config
 public class DemoConfig {

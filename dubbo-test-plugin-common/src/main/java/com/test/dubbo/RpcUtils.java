@@ -2,7 +2,7 @@ package com.test.dubbo;
 
 /**
  * RpcUtils的ClassLoader是
- * {@linkplain com.alibaba.oneagent.plugin.classloader.PluginClassLoader}，演示在被增强的Dubbo代码里加载其它类。
+ * {@linkplain io.oneagent.plugin.classloader.PluginClassLoader}，演示在被增强的Dubbo代码里加载其它类。
  * 
  * @author hengyunabc 2021-08-26
  *

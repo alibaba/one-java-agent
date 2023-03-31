@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.alibaba.oneagent</groupId>
+        <groupId>io.oneagent</groupId>
         <artifactId>one-java-agent-parent</artifactId>
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
@@ -11,14 +11,14 @@
 
     <dependencies>
          <dependency>
-            <groupId>com.alibaba.oneagent</groupId>
+            <groupId>io.oneagent</groupId>
             <artifactId>one-java-agent-plugin</artifactId>
             <version>${project.version}</version>
             <optional>true</optional>
             <scope>provided</scope>
         </dependency>
          <dependency>
-            <groupId>com.alibaba.oneagent</groupId>
+            <groupId>io.oneagent</groupId>
             <artifactId>one-java-agent</artifactId>
             <version>${project.version}</version>
             <optional>true</optional>
@@ -26,7 +26,7 @@
         </dependency>
 
          <dependency>
-            <groupId>com.alibaba.oneagent</groupId>
+            <groupId>io.oneagent</groupId>
             <artifactId>dubbo-test-instrument</artifactId>
             <version>${project.version}</version>
             <optional>true</optional>
@@ -34,7 +34,7 @@
         </dependency>
 
          <dependency>
-            <groupId>com.alibaba.oneagent</groupId>
+            <groupId>io.oneagent</groupId>
             <artifactId>dubbo-test-plugin-common</artifactId>
             <version>${project.version}</version>
         </dependency>

@@ -42,7 +42,7 @@ public class TraceConfiguration {
             GlobalOpenTelemetry.set(openTelemetry);
 
             // 设置tracer和parentSpan
-            tracer = GlobalOpenTelemetry.getTracer("com.alibaba.oneagent.trace");
+            tracer = GlobalOpenTelemetry.getTracer("io.oneagent.trace");
             try {
                 parentSpan = tracer.spanBuilder("/").startSpan();
                 scope = parentSpan.makeCurrent();

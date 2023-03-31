@@ -30,7 +30,7 @@
         </developer>
     </developers>
 
-    <groupId>com.alibaba.oneagent</groupId>
+    <groupId>io.oneagent</groupId>
     <artifactId>one-java-agent-parent</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
@@ -64,7 +64,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
-        <oneagent.deps.package>com.alibaba.oneagent.deps</oneagent.deps.package>
+        <oneagent.deps.package>io.oneagent.deps</oneagent.deps.package>
         <bytekit.version>0.0.8-SNAPSHOT</bytekit.version>
         <grpc.version>1.46.0</grpc.version>
         <opentelemetry.version>1.21.0-alpha</opentelemetry.version>

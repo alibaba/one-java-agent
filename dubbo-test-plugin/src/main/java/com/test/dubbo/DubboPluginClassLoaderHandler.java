@@ -1,6 +1,6 @@
 package com.test.dubbo;
 
-import com.alibaba.oneagent.service.ClassLoaderHandler;
+import io.oneagent.service.ClassLoaderHandler;
 
 /**
  * 

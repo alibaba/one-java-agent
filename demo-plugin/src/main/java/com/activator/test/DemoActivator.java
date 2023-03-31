@@ -5,9 +5,10 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.bytekit.ByteKit;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.oneagent.plugin.PluginActivator;
-import com.alibaba.oneagent.plugin.PluginContext;
-import com.alibaba.oneagent.plugin.config.BinderUtils;
+
+import io.oneagent.plugin.PluginActivator;
+import io.oneagent.plugin.PluginContext;
+import io.oneagent.plugin.config.BinderUtils;
 
 public class DemoActivator implements PluginActivator {
     private Logger logger = LoggerFactory.getLogger(DemoActivator.class);

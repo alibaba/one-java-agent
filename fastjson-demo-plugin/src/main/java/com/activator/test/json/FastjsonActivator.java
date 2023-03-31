@@ -1,8 +1,9 @@
 package com.activator.test.json;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.oneagent.plugin.PluginActivator;
-import com.alibaba.oneagent.plugin.PluginContext;
+
+import io.oneagent.plugin.PluginActivator;
+import io.oneagent.plugin.PluginContext;
 
 public class FastjsonActivator implements PluginActivator {
 

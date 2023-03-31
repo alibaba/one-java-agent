@@ -1,6 +1,6 @@
 package com.activator.opentelemetry;
 
-import com.alibaba.oneagent.service.ClassLoaderHandler;
+import io.oneagent.service.ClassLoaderHandler;
 
 /**
  * 

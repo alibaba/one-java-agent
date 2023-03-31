@@ -1,0 +1,4 @@
+io.oneagent.service.TransformerManagerImpl
+io.oneagent.service.ClassLoaderHandlerManagerImpl
+io.oneagent.plugin.share.SharedServiceImpl
+io.oneagent.service.OneAgentInfoServiceImpl
