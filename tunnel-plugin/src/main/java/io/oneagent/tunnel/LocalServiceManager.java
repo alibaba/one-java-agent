@@ -9,6 +9,8 @@ import io.grpc.util.MutableHandlerRegistry;
 import io.netty.channel.DefaultEventLoopGroup;
 import io.netty.channel.local.LocalAddress;
 import io.netty.channel.local.LocalServerChannel;
+import io.oneagent.api.impl.SystemEnvImpl;
+import io.oneagent.api.impl.SystemPropertyImpl;
 
 /**
  * 
@@ -25,7 +27,7 @@ public class LocalServiceManager {
     public void start() throws IOException {
         Server server = NettyServerBuilder.forAddress(localAddress).channelType(LocalServerChannel.class)
                 .workerEventLoopGroup(eventLoopGroup).bossEventLoopGroup(eventLoopGroup)
-                .fallbackHandlerRegistry(registry).addService(new SystemPropertyImpl()).build();
+                .fallbackHandlerRegistry(registry).addService(new SystemPropertyImpl()).addService(new SystemEnvImpl()).build();
 
         server.start();
     }
