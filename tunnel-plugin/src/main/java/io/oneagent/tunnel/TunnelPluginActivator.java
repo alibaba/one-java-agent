@@ -25,10 +25,7 @@ public class TunnelPluginActivator implements PluginActivator {
 
     @Override
     public boolean enabled(PluginContext context) {
-        System.out.println("enabled " + this.getClass().getName());
-
-        this.getClass().getProtectionDomain().getCodeSource().getLocation().getFile();
-
+        logger.info("plugin endabled");
         return true;
     }
 

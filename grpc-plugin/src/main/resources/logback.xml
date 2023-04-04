@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <property name="PLUGIN_NAME" value="grpc-plugin" />
+    <property name="ONEAGENT_LOG_PATH" value="${ONEAGENT_LOG_PATH:-${user.home}/logs/oneagent}" />
+    
+    <property name="PLUGIN_LOG_PATH" value="${ONEAGENT_LOG_PATH}/${PLUGIN_NAME}" />
+    
+    <property name="PLUGIN_LOG_FILE" value="${PLUGIN_LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}/${PLUGIN_NAME}.log" />
+
+    <!-- plugin_name.log -->
+    <appender name="PLUGIN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${PLUGIN_LOG_FILE}</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} -%msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${ONEAGENT_LOG_FILE}.%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxHistory>7</maxHistory>
+            <maxFileSize>1MB</maxFileSize>
+            <totalSizeCap>10MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="PLUGIN" />
+    </root>
+
+</configuration>
