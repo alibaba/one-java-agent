@@ -8,7 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.reverse.proxy.client.TunnelClient;
+import com.google.common.collect.Lists;
 
+import io.oneagent.api.impl.OneAgentInfoImpl;
 import io.oneagent.plugin.PluginActivator;
 import io.oneagent.plugin.PluginContext;
 import io.oneagent.plugin.config.BinderUtils;
@@ -31,12 +33,13 @@ public class TunnelPluginActivator implements PluginActivator {
 
     @Override
     public void init(PluginContext context) throws Exception {
-        System.out.println("init " + this.getClass().getName());
-
         BinderUtils.inject(context.getPlugin().config(), tunnelConifg);
 
+        OneAgentInfoService oneAgentInfoService = context.getComponentManager().getComponent(OneAgentInfoService.class);
+        OneAgentInfoImpl agentInfoImpl = new OneAgentInfoImpl(oneAgentInfoService);
+
         localServiceManager = new LocalServiceManager();
-        localServiceManager.start();
+        localServiceManager.start(Lists.newArrayList(agentInfoImpl));
 
         OneAgentInfoService agentInfoService = context.getComponentManager().getComponent(OneAgentInfoService.class);
         String appName = agentInfoService.appName();
@@ -60,13 +63,10 @@ public class TunnelPluginActivator implements PluginActivator {
 
     @Override
     public void start(PluginContext context) throws Exception {
-        System.out.println("start " + this.getClass().getName());
     }
 
     @Override
     public void stop(PluginContext context) throws Exception {
-        System.out.println("stop " + this.getClass().getName());
-
         if (localServiceManager != null) {
             localServiceManager.stop();
         }

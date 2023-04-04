@@ -1,6 +1,7 @@
 package io.oneagent.tunnel;
 
 import java.io.IOException;
+import java.util.List;
 
 import io.grpc.BindableService;
 import io.grpc.Server;
@@ -24,10 +25,18 @@ public class LocalServiceManager {
 
     private Server server;
 
-    public void start() throws IOException {
-        Server server = NettyServerBuilder.forAddress(localAddress).channelType(LocalServerChannel.class)
-                .workerEventLoopGroup(eventLoopGroup).bossEventLoopGroup(eventLoopGroup)
-                .fallbackHandlerRegistry(registry).addService(new SystemPropertyImpl()).addService(new SystemEnvImpl()).build();
+    public void start(List<BindableService> services) throws IOException {
+        NettyServerBuilder serverBuilder = NettyServerBuilder.forAddress(localAddress)
+                .channelType(LocalServerChannel.class).workerEventLoopGroup(eventLoopGroup)
+                .bossEventLoopGroup(eventLoopGroup).fallbackHandlerRegistry(registry)
+                .addService(new SystemPropertyImpl()).addService(new SystemEnvImpl());
+
+        if (services != null) {
+            for (BindableService service : services) {
+                serverBuilder.addService(service);
+            }
+        }
+        Server server = serverBuilder.build();
 
         server.start();
     }

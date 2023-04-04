@@ -36,3 +36,9 @@ service SystemEnv {
     rpc get(google.protobuf.Empty) returns (Envs);
     rpc getByKey(StringKey) returns (StringValue);
 }
+
+service OneAgentInfo {
+    rpc appName(google.protobuf.Empty) returns (StringValue);
+    rpc version(google.protobuf.Empty) returns (StringValue);
+    rpc config(google.protobuf.Empty) returns (Properties);
+}
