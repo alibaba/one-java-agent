@@ -1,6 +1,7 @@
 package io.oneagent.tunnel;
 
 import java.lang.invoke.MethodHandles;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.reverse.proxy.client.TunnelClient;
-import com.google.common.collect.Lists;
 
 import io.oneagent.api.impl.OneAgentInfoImpl;
 import io.oneagent.plugin.PluginActivator;
@@ -38,8 +38,9 @@ public class TunnelPluginActivator implements PluginActivator {
         OneAgentInfoService oneAgentInfoService = context.getComponentManager().getComponent(OneAgentInfoService.class);
         OneAgentInfoImpl agentInfoImpl = new OneAgentInfoImpl(oneAgentInfoService);
 
-        localServiceManager = new LocalServiceManager();
-        localServiceManager.start(Lists.newArrayList(agentInfoImpl));
+        localServiceManager = new LocalServiceManager(tunnelConifg.getListenAddress(),
+                Collections.singletonList(agentInfoImpl));
+        localServiceManager.start();
 
         OneAgentInfoService agentInfoService = context.getComponentManager().getComponent(OneAgentInfoService.class);
         String appName = agentInfoService.appName();

@@ -45,8 +45,6 @@ public class OneAgentInfoImpl extends OneAgentInfoImplBase {
 
         responseObserver.onNext(Properties.newBuilder().putAllProperties(map).build());
         responseObserver.onCompleted();
-
-        super.config(request, responseObserver);
     }
 
 }
