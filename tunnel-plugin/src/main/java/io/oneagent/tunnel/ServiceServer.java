@@ -11,6 +11,7 @@ import io.grpc.protobuf.services.ProtoReflectionService;
 import io.grpc.util.MutableHandlerRegistry;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.ServerChannel;
+import io.oneagent.api.impl.ServerReflectionImpl;
 import io.oneagent.api.impl.SystemEnvImpl;
 import io.oneagent.api.impl.SystemPropertyImpl;
 
@@ -20,6 +21,8 @@ import io.oneagent.api.impl.SystemPropertyImpl;
  *
  */
 public class ServiceServer {
+    private static final ProtoReflectionService reflectionService = (ProtoReflectionService) ProtoReflectionService
+            .newInstance();
     private EventLoopGroup eventLoopGroup;
     private MutableHandlerRegistry registry = new MutableHandlerRegistry();
     private SocketAddress listenAddress;
@@ -43,10 +46,12 @@ public class ServiceServer {
     }
 
     private void startServer() throws IOException {
+
         NettyServerBuilder serverBuilder = NettyServerBuilder.forAddress(listenAddress).channelType(channelType)
                 .workerEventLoopGroup(eventLoopGroup).bossEventLoopGroup(eventLoopGroup)
-                .fallbackHandlerRegistry(registry).addService(ProtoReflectionService.newInstance())
-                .addService(new SystemPropertyImpl()).addService(new SystemEnvImpl());
+                .fallbackHandlerRegistry(registry).addService(reflectionService)
+                .addService(new ServerReflectionImpl(reflectionService)).addService(new SystemPropertyImpl())
+                .addService(new SystemEnvImpl());
 
         if (services != null) {
             for (BindableService service : services) {

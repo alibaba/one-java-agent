@@ -5,7 +5,7 @@ syntax = "proto3";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
-
+import "grpc/reflection/v1alpha/reflection.proto";
 
 package io.oneagent.api;
 
@@ -41,4 +41,11 @@ service OneAgentInfo {
     rpc appName(google.protobuf.Empty) returns (StringValue);
     rpc version(google.protobuf.Empty) returns (StringValue);
     rpc config(google.protobuf.Empty) returns (Properties);
+}
+
+service ServerReflection {
+  // https://github.com/grpc/grpc-java/blob/v1.54.0/services/src/main/proto/grpc/reflection/v1alpha/reflection.proto
+  // 简化为无 stream 版本，因为grpc web不支持client stream
+  // 使用 grpc.reflection.v1alpha 的 package，因为 grpc的 java jar包里仍是这个package name
+  rpc ServerReflectionInfo( grpc.reflection.v1alpha.ServerReflectionRequest) returns (grpc.reflection.v1alpha.ServerReflectionResponse);
 }
