@@ -65,7 +65,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
         <oneagent.deps.package>io.oneagent.deps</oneagent.deps.package>
-        <bytekit.version>0.0.8-SNAPSHOT</bytekit.version>
+        <bytekit.version>0.0.9-SNAPSHOT</bytekit.version>
         <protoc.version>3.22.4</protoc.version>
         <grpc.version>1.55.1</grpc.version>
         <opentelemetry.version>1.21.0-alpha</opentelemetry.version>
