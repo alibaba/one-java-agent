@@ -5,6 +5,11 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
+import com.alibaba.bytekit.asm.instrument.InstrumentConfig;
+import com.alibaba.bytekit.asm.instrument.InstrumentParseResult;
+import com.alibaba.bytekit.asm.instrument.InstrumentTransformer;
+import com.alibaba.bytekit.asm.matcher.SimpleClassMatcher;
+import com.alibaba.bytekit.utils.AsmUtils;
 import io.oneagent.inst.ClassLoader_Instrument;
 import io.oneagent.plugin.PluginException;
 import io.oneagent.plugin.PluginManager;
@@ -15,13 +20,7 @@ import io.oneagent.utils.FeatureCodec;
 import io.oneagent.utils.IOUtils;
 import io.oneagent.utils.InstrumentationUtils;
 import io.oneagent.utils.InstrumentationWrapper;
-
-import com.alibaba.bytekit.asm.instrument.InstrumentConfig;
-import com.alibaba.bytekit.asm.instrument.InstrumentParseResult;
-import com.alibaba.bytekit.asm.instrument.InstrumentTransformer;
-import com.alibaba.bytekit.asm.matcher.SimpleClassMatcher;
-import com.alibaba.bytekit.utils.AsmUtils;
-
+import io.oneagent.utils.PropertiesUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +32,12 @@ import java.lang.instrument.Instrumentation;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.security.CodeSource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.jar.JarFile;
 
 /**
@@ -46,6 +50,7 @@ public class AgentImpl implements Agent {
     private static final String ONEAGENT_VERBOSE = "oneagent.verbose";
 
     private static final String ONEAGENT_HOME = "oneagent.home";
+    private static final String ONEAGENT_PROPERTIES = "oneagent.properties";
     public static final String ONEAGENT_EXT_PLUGINS = "oneagent.extPlugins";
     private static final String ONEAGENT_ENHANCE_LOADERS = "oneagent.enhanceLoaders";
 
@@ -64,12 +69,10 @@ public class AgentImpl implements Agent {
         inst = new InstrumentationWrapper(inst);
         this.instrumentation = inst;
 
-        Properties config = this.getOneAgentConfigurationProperties(args);
-
+        Properties config = this.parseConfig(args);
         this.initLogger(config);
 
-        this.findOneAgentHomePath(config);
-
+        logger.info("oneagent home: " + config.get(ONEAGENT_HOME));
         logger.debug("PluginManager properties: {}", config);
 
         boolean appendResult = this.appendSpyJarToBootstrapClassLoaderSearch();
@@ -106,12 +109,30 @@ public class AgentImpl implements Agent {
      * @param args
      * @return
      */
-    private Properties getOneAgentConfigurationProperties(String args) {
+    private Properties parseConfig(String args) {
+        Properties properties = parseConfigFromArgs(args);
+        String home = findOneAgentHomePath(properties);
+        Properties p = parseConfigFromHome(home);
+        if (p != null) {
+            for (String key : p.stringPropertyNames()) {
+                if (!properties.containsKey(key)) {
+                    properties.setProperty(key, p.getProperty(key));
+                }
+            }
+        }
+        return properties;
+    }
+
+    private Properties parseConfigFromArgs(String args) {
         args = decodeArg(args);
         Map<String, String> map = FeatureCodec.DEFAULT_COMMANDLINE_CODEC.toMap(args);
         Properties properties = new Properties();
         properties.putAll(map);
         return properties;
+    }
+
+    private Properties parseConfigFromHome(String home) {
+        return PropertiesUtils.loadOrNull(new File(home, ONEAGENT_PROPERTIES));
     }
 
     /**
@@ -192,7 +213,7 @@ public class AgentImpl implements Agent {
      * @param config
      * @return
      */
-    private void findOneAgentHomePath(Properties config) {
+    private String findOneAgentHomePath(Properties config) {
         String oneagentHome = config.getProperty(ONEAGENT_HOME);
 
         if (oneagentHome == null) {
@@ -222,7 +243,8 @@ public class AgentImpl implements Agent {
 
             config.put(ONEAGENT_HOME, oneagentHome);
         }
-        logger.info("oneagent home: " + config.get(ONEAGENT_HOME));
+        
+        return (String) config.get(ONEAGENT_HOME);
     }
 
     @Override
