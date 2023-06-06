@@ -167,7 +167,7 @@ public class PluginClassLoader extends URLClassLoader {
     @Override
     public Enumeration<URL> getResources(String name) throws IOException {
         // 优先加载
-        if (resourceFilter != null) {
+        if (resourceFilter != null && resourceFilter.matched(name)) {
             Enumeration<URL> fromFilter = resourceFilter.getResources(name);
             // TODO 是否要合并加载
             return fromFilter;
